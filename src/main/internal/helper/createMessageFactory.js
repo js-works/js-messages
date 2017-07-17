@@ -1,28 +1,26 @@
-import createParamsValidator from './createParamsValidator';
+import createParamsSpecValidator from './createParamsSpecValidator';
 
 export default function createMessageFactory(fullTypeName, messageConfig) {
     const
         { defaultParams, getPayload = null, getMeta = null, merge = false } = messageConfig,
         
-        validateParams =
-            createParamsValidator(messageConfig.validateParams);
+        paramsSpecValidator =
+            createParamsSpecValidator(messageConfig.validateParams);
         
-
     return params => {
-        const adjustedParams = defaultParams
-            ? Object.assign({}, defaultParams, params)
-            : params;
+        const
+            adjustedParams = defaultParams
+                ? Object.assign({}, defaultParams, params)
+                : params,
 
-        if (validateParams) {
-            const error = validateParams(adjustedParams);
+            error = paramsSpecValidator.validate(adjustedParams);
 
-            if (error) {
-                throw new Error(
-                    "Illegal parameters for message of type '"
-                    + fullTypeName
-                    + ': '
-                    + error.message);
-            }
+        if (error) {
+            throw new Error(
+                "Illegal parameters for message of type '"
+                + fullTypeName
+                + ': '
+                + error.message);
         }
 
         const

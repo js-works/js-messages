@@ -18,12 +18,12 @@ const configSpec = Spec.shape({
                     validateParams:
                         Spec.optional(    
                             Spec.or(
-                                Spec.function,
+                                Spec.validator,
                                 Spec.and(
                                     Spec.object,
                                     Spec.hasSomeKeys,
                                     Spec.keysOf(Spec.match(REGEX_PARAM_NAME)),
-                                    Spec.valuesOf(Spec.function)
+                                    Spec.valuesOf(Spec.validator)
                                 ))),
                     
                     defaultParams:
@@ -45,5 +45,5 @@ const configSpec = Spec.shape({
 });
 
 export default function validateDefineMessagesConfig(config) {
-    return configSpec(config, '');
+    return configSpec.validate(config, '');
 }
