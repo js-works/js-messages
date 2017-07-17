@@ -12,8 +12,7 @@ export default function defineMessages(config) {
     const
         ret = {},    
         error = validateDefineMessagesConfig(config);
-console.log(config);
-//process.exit(0)
+
     if (error) {
         throw new Error('[defineMessages] Illegal first argument '
             + "'config': " + error.message);

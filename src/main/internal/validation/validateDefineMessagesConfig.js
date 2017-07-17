@@ -33,6 +33,9 @@ const configSpec = Spec.shape({
                                 Spec.keysOf(Spec.match(REGEX_PARAM_NAME)),
                                 Spec.valuesOf(Spec.isNot(undefined)))),
 
+                    merge:
+                         Spec.optional(Spec.boolean),
+                         
                     getPayload:
                         Spec.optional(Spec.function),
 

@@ -17,7 +17,21 @@ const Msgs = defineMessages({
             defaultParams: {
                 text: '',
                 completed: false
-            }
+            },
+        },
+
+        addTodoMerged: {
+            validateParams: {
+                text: Spec.nullable(Spec.string),
+                completed: Spec.boolean
+            },
+
+            defaultParams: {
+                text: '',
+                completed: false
+            },
+
+            merge: true
         },
 
         updateTodo: {
@@ -57,6 +71,13 @@ describe('defineMessages', () => {
                     text: 'new todo',
                     completed: false
                 }});
+
+        expect(Msgs.addTodoMerged({ text: 'new todo' }))
+            .to.deep.eql({
+                type: 'todos:addTodoMerged',
+                text: 'new todo',
+                completed: false
+            });
 
         expect(Msgs.updateTodo({ id: 123, text: 'updated todo'}))
             .to.deep.eql({
