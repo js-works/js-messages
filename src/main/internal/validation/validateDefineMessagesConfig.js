@@ -11,19 +11,19 @@ const configSpec = Spec.shape({
     types:
         Spec.and(
             Spec.object,
-            Spec.hasKeys,
+            Spec.hasSomeKeys,
             Spec.keysOf(Spec.match(REGEX_TYPE_NAME)),
             Spec.valuesOf(
                 Spec.shape({
                     validateParams:
                         Spec.optional(    
                             Spec.or(
-                                Spec.func,
+                                Spec.function,
                                 Spec.and(
                                     Spec.object,
-                                    Spec.hasKeys,
+                                    Spec.hasSomeKeys,
                                     Spec.keysOf(Spec.match(REGEX_PARAM_NAME)),
-                                    Spec.valuesOf(Spec.func)
+                                    Spec.valuesOf(Spec.function)
                                 ))),
                     
                     defaultParams:
@@ -34,10 +34,10 @@ const configSpec = Spec.shape({
                                 Spec.valuesOf(Spec.isNot(undefined)))),
 
                     getPayload:
-                        Spec.optional(Spec.func),
+                        Spec.optional(Spec.function),
 
                     getMeta:
-                        Spec.optional(Spec.func)
+                        Spec.optional(Spec.function)
                 })))
 });
 
