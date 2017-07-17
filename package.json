@@ -1,9 +1,9 @@
 {
-  "name": "js-message",
-  "version": "0.1.1",
+  "name": "js-messages",
+  "version": "0.1.2",
   "license": "LGPL-3.0",
-  "homepage": "https://github.com/js-works/js-message",
-  "main": "dist/js-message.min.js",
+  "homepage": "https://github.com/js-works/js-messages",
+  "main": "dist/js-messages.min.js",
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
@@ -20,11 +20,11 @@
   "scripts": {
     "clean": "node_modules/.bin/shx rm -rf ./build ./dist",
     "compile": "npm run clean && \"node_modules/.bin/babel\" --presets es2015 -d build src/main/**/*.js",
-    "bundle": "npm run compile && \"node_modules/.bin/shx\" mkdir -p dist && \"node_modules/.bin/browserify\" build/src/main/js-message.js -x js-spec -s jsMessage -o dist/js-message.js",
-    "minimize": "npm run bundle && \"node_modules/.bin/uglifyjs\" dist/js-message.js -o dist/js-message.min.js --compress --mangle",
-    "compress": "npm run minimize && \"node_modules/.bin/ngzip\" -9 dist/js-message.min.js > dist/js-message.min.js.gz",
+    "bundle": "npm run compile && \"node_modules/.bin/shx\" mkdir -p dist && \"node_modules/.bin/browserify\" build/src/main/js-messages.js -x js-spec -s jsMessages -o dist/js-messages.js",
+    "minimize": "npm run bundle && \"node_modules/.bin/uglifyjs\" dist/js-messages.js -o dist/js-messages.min.js --compress --mangle",
+    "compress": "npm run minimize && \"node_modules/.bin/ngzip\" -9 dist/js-messages.min.js > dist/js-messages.min.js.gz",
     "test": "node_modules/.bin/mocha --compilers babel-core/register src/test/**/*.js",
-    "xxdocs": "node_modules/.bin/shx rm -rf ./dist/docs && \"node_modules/.bin/cross-conf-env\" typedoc --options typedoc.json src/main/api/ -name \"js-message vnpm_package_version\"",
+    "xxdocs": "node_modules/.bin/shx rm -rf ./dist/docs && \"node_modules/.bin/cross-conf-env\" typedoc --options typedoc.json src/main/api/ -name \"js-messages vnpm_package_version\"",
     "docs": "node_modules/.bin/shx rm -rf ./dist/docs && \"node_modules/.bin/esdoc\" -c esdoc.json",
     "all": "npm run compress && npm run test && npm run docs && \"node_modules/.bin/shx\" echo Finished successfully."
   }

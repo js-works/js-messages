@@ -1,4 +1,4 @@
-## js-message
+## js-messages
 
 A small library to simplify the definition and creation of messages (a.k.a. 'actions' in Flux/Redux etc. context)
 
