@@ -45,6 +45,9 @@ const configSpec =
         )
     );
 
+/**
+ * @ignore 
+ */
 export default function validateMessagesConfig(config) {
     return configSpec.validate(config);
 }

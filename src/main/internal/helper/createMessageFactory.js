@@ -12,6 +12,9 @@ if (typeof self === 'object' && self && self.Math) {
     globalSpace = global;
 }
 
+/**
+ * @ignore 
+ */
 export default function createMessageFactory(type, validateArgs, provider) {
     let argsValidator = null;
 

@@ -1,5 +1,8 @@
 import createMessageFactory from './createMessageFactory';
 
+/**
+ * @ignore 
+ */
 export default function createMessageCategory(config, namespace = null) {
     const ret = {};
 
