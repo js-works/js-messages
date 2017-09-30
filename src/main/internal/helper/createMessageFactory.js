@@ -28,7 +28,7 @@ export default function createMessageFactory(type, validateArgs, provider) {
     }
 
     const ret = function (...args) {
-        if (argsValidator && globalSpace && globalSpace.debug !== false) {
+        if (argsValidator && globalSpace && globalSpace.GlobalConfig && globalSpace.GlobalConfig.debug !== false) {
             const error = argsValidator.validate(args);
 
             if (error) {

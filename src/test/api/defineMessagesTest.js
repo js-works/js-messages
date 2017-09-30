@@ -4,11 +4,13 @@ import { expect } from 'chai';
 import defineMessages from '../../main/api/defineMessages';
 import { Spec } from 'js-spec';
 
+global.GlobalConfig = { debug: true };
+
 const
     Msg1 = defineMessages({
         increment: [
-            [ Spec.integer ],
-            delta => ({ delta })
+            { delta: Spec.integer },
+            ({ delta }) => ({ delta })
         ],
         reset: null,
 
@@ -24,7 +26,7 @@ describe('defineMessages', () => {
     it('should generate message factories that create valid messages', () => {
 
         console.log(Msg1.increment.type);
-        console.log(Msg1.increment(10));
+        console.log(Msg1.increment({ delta: 10 }));
 
         process.exit(0);
         /*
