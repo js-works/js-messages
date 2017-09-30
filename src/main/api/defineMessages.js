@@ -1,32 +1,15 @@
-import validateDefineMessagesConfig
-    from '../internal/validation/validateDefineMessagesConfig';
+import createMessageCategory
+    from '../internal/helper/createMessageCategory';
 
-import toConstantCase
-    from '../internal/helper/toConstantCase';
-
-import createMessageFactory
-    from '../internal/helper/createMessageFactory';
-
+import validateMessagesConfig
+    from '../internal/validation/validateMessagesConfig';
 
 export default function defineMessages(config) {
-    const
-        ret = {},    
-        error = validateDefineMessagesConfig(config);
+    const error = validateMessagesConfig(config);
 
     if (error) {
-        throw new Error('[defineMessages] Illegal first argument '
-            + "'config': " + error.message);
+        throw new Error(`[defineMessages] ${error.message}`);
     }
 
-    for (let typeName of Object.keys(config.types)) {
-        const
-            typeConstantName = toConstantCase(typeName),
-            messageConfig = config.types[typeName],
-            fullTypeName = `${config.category}:${typeName}`;
-
-        ret[typeConstantName] = fullTypeName;
-        ret[typeName] = createMessageFactory(fullTypeName, messageConfig);        
-    }
-
-    return ret;
+    return createMessageCategory(config);     
 }
