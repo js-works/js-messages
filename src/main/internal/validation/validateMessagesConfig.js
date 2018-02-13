@@ -6,7 +6,9 @@ const REGEX_KEY_NAME = /^[a-z][a-zA-Z0-9]*(:[a-z][a-zA-Z0-9]*)*$/;
 export default function validateMessagesConfig(config, path = null) {
     let
         ret = null,
-        errorMsg = null;
+        errorMsg = null,
+        hasFactory = false,
+        hasCategory = false;
 
     if (!config || typeof config !== 'object') {
         errorMsg = 'Configuration of messages must be an object';
@@ -40,6 +42,13 @@ export default function validateMessagesConfig(config, path = null) {
 
                 if (errorMsg) {
                     break;
+                } else if (value === null
+                    || typeOfValue === 'function'
+                    || Array.isArray(value)) {
+
+                    hasFactory = true;
+                } else {
+                    hasCategory = true;
                 }
             }
         }
@@ -47,6 +56,11 @@ export default function validateMessagesConfig(config, path = null) {
 
     if (errorMsg) {
         ret = new Error(errorMsg);
+    } else if (hasFactory && hasCategory) {
+        ret = new Error(
+            'Not allowed to have message factories and message categories '
+                + 'both at once at the '
+                + (!path ? 'root node' : 'same node ' + path));
     }
 
     return ret;
