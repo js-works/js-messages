@@ -3,11 +3,14 @@ import createMessageFactory from './createMessageFactory';
 /**
  * @ignore 
  */
-export default function createMessageCategory(config, namespace = null, root = null) {
-    const ret = {};
+export default function createMessageCategory(config, namespace = null, path = null) {
+    const
+        ret = {},
+        keys = Object.keys(config);
 
-    for (const key of Object.keys(config)) {
+    for (let i = 0; i < keys.length; ++i) {
         const
+            key = keys[i],
             name = namespace === null ? key : `${namespace}/${key}`,
             value = config[key];
 
@@ -16,7 +19,7 @@ export default function createMessageCategory(config, namespace = null, root = n
         } else if (Array.isArray(value)) {
             ret[key] = createMessageFactory(name, value[0], value[1]);
         } else if (typeof value === 'object') {
-            const category = createMessageCategory(value, name, root ? root : ret);
+            const category = createMessageCategory(value, name, path ? [...path, ret] : [ret]);
 
             Object.defineProperty(ret, key, {
                 enumerable: false,
@@ -29,8 +32,10 @@ export default function createMessageCategory(config, namespace = null, root = n
             throw new Error('[createMessageCategory] Unkown property type ... this should never happen');
         }
 
-        if (root !== null && typeof ret[key] === 'function') {
-            root[key] = ret[key];
+        if (path && typeof ret[key] === 'function') {
+            for (let j = 0; j < path.length; ++j) {
+                path[j][key] = ret[key];
+            }
         }
     }
 

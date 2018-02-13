@@ -3,7 +3,7 @@ const REGEX_KEY_NAME = /^[a-z][a-zA-Z0-9]*(:[a-z][a-zA-Z0-9]*)*$/;
 /**
  * @ignore 
  */
-export default function validateMessagesConfig(config, path = null) {
+export default function validateMessagesConfig(config, fullKey = null) {
     let
         ret = null,
         errorMsg = null,
@@ -23,7 +23,7 @@ export default function validateMessagesConfig(config, path = null) {
             for (let i = 0; i < keys.length; ++i) {
                 const
                     key = keys[i],
-                    fullKey = path ? `${path}.${key}` : key,
+                    fullKey = fullKey ? `${fullKey}.${key}` : key,
                     value = config[key],
                     typeOfValue = typeof value;
 
@@ -60,29 +60,29 @@ export default function validateMessagesConfig(config, path = null) {
         ret = new Error(
             'Not allowed to have message factories and message categories '
                 + 'both at once at the '
-                + (!path ? 'root node' : 'same node ' + path));
+                + (!fullKey ? 'root node' : 'same node ' + fullKey));
     }
 
     return ret;
 }
 
-function validatePayloadCreatorConfig(payloadCreatorConfig, path) {
+function validatePayloadCreatorConfig(payloadCreatorConfig, fullKey) {
     let
         ret = null,
         errorMsg = null;
     
     // already checked that valueConfig is an array
     if (payloadCreatorConfig.length !== 2) {
-        errorMsg = `Configuration array for "${path}" `
+        errorMsg = `Configuration array for "${fullKey}" `
             + 'must contain extactly two elements';
     } else {
         const [constraints, payloadCreator] = payloadCreatorConfig;
 
         if (typeof constraints !== 'object') {
-            errorMsg = `First element in configuration array for "${path}" `
+            errorMsg = `First element in configuration array for "${fullKey}" `
                 + 'must either be an object or null';
         } else if (typeof payloadCreator !== 'function') {
-            errorMsg = `Second element in configuration array for "${path}" `
+            errorMsg = `Second element in configuration array for "${fullKey}" `
                 + 'must be a function';
         } else if (constraints) {
             const keys = Object.keys(constraints);
@@ -98,7 +98,7 @@ function validatePayloadCreatorConfig(payloadCreatorConfig, path) {
                         || typeof validator.validate !== 'function')) {
 
                     errorMsg = `Property with key "${i}" of first element of `
-                        + `configuration array for "${path}" `
+                        + `configuration array for "${fullKey}" `
                         + 'must either be a valid validator or null';
                     
                     break;

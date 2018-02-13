@@ -12,12 +12,7 @@ describe('validateMessagesConfig', () => {
                 y: {
                     z: [null, () => true]
                 },
-                z: [
-                    null,
-                    () => true
-                ] 
-            },
-            y: () => null
+            }
         });
 
         expect(result).to.be.null;

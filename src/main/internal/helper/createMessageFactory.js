@@ -115,7 +115,9 @@ export default function createMessageFactory(
         return message;
     };
 
-    ret.type = type;
+    ret.toString = () => type;
+
+    Object.defineProperty(ret, 'type', { get: () => type });
     Object.freeze(ret);
 
     return ret;
