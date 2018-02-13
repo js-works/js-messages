@@ -1,6 +1,6 @@
 import defineMessages from './api/defineMessages';
-import deriveReducer from './api/defineMessages';
-import deriveMiddleware from './api/defineMessages';
+import deriveReducer from './api/deriveReducer';
+import deriveMiddleware from './api/deriveMiddleware';
 
 export {
     defineMessages,
