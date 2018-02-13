@@ -1,48 +1,79 @@
-/* global self */
-
-import { Spec, SpecValidator } from 'js-spec';
-
-let globalSpace = null;
-
-if (typeof self === 'object' && self && self.Math) {
-    globalSpace = self;
-} else if (typeof window === 'object' && window && window.Math) {
-    globalSpace = window;
-} else if (typeof global === 'object' && global && global.Math) {
-    globalSpace = global;
-}
-
 /**
  * @ignore 
  */
-export default function createMessageFactory(type, validateArgs, provider) {
-    let argsValidator = null;
+export default function createMessageFactory(
+    type, validateArgs, payloadCreator) {
+    
+    let validator = null;
 
     if (validateArgs) {
-        if (validateArgs instanceof SpecValidator) {
-            argsValidator = validateArgs;
-        } else if (typeof validateArgs === 'function') {
-            argsValidator = SpecValidator.from(validateArgs);
-        } else if (Array.isArray(validateArgs)) {
-            argsValidator = Spec.shape(validateArgs); 
-        } else if (typeof validateArgs === 'object') {
-            argsValidator = Spec.struct({ 0: Spec.shape(validateArgs) });
+        if (validateArgs === null) {
+            validator = () => null; // TODO
+        } else {
+            const
+                keys = Object.keys(validateArgs),
+                isArray = Array.isArray(validateArgs);
+
+            validator = (args) => {
+                const subject = isArray ? args : args[0];
+
+                let errorMsg = null;
+
+                for (let i = 0; i < keys.length; ++i) {
+                    const
+                        key = keys[i],
+                        checker = validateArgs[key],
+                        value = subject ? subject[key] : undefined;
+                
+                    let checkResult = null;
+
+                    if (typeof checker === 'function') {
+                        checkResult = checker(value);
+                    } else if (checker !== null) {
+                        checkResult = checker.validate(value);
+                    }
+
+                    if (checkResult instanceof Error && checkResult.message) {
+                        errorMsg = String(checkResult.message);
+                    } else if (checkResult && checkResult !== true) {
+                        errorMsg = String(checkResult);
+                    }
+
+                    if (ret === false || errorMsg !== null) {
+                        errorMsg = String(errorMsg || '').trim();
+
+                        if (errorMsg.length === 0) {
+                            errorMsg = 'Illegal value';
+                        }
+
+                        errorMsg =
+                            (isArray 
+                                ? `Validation error for argument index ${key}`
+                                : `Validation error for property "${key}"`)
+                            + ' => ' + errorMsg;
+
+                        break;
+                    }
+                }
+
+                return errorMsg ? new Error(errorMsg) : null;
+            };
         }
     }
 
     const ret = function (...args) {
-        if (argsValidator && globalSpace && globalSpace.GlobalConfig && globalSpace.GlobalConfig.debug !== false) {
-            const error = argsValidator.validate(args);
+        if (validator) {
+            const error = validator(args);
 
             if (error) {
-                throw new Error(`[Message ${type}] Wrong arguments for messaage factory => ${error.message}`);
+                throw new Error(`[Message "${type}"] Wrong arguments for messaage factory => ${error.message}`);
             }
         }
 
         const message = { type };
 
-        if (typeof provider === 'function') {
-            const result = provider(...args);
+        if (typeof payloadCreator === 'function') {
+            const result = payloadCreator(...args);
 
             if (result !== null && typeof result === 'object'
                 && result.constructor === Object

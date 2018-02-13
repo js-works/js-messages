@@ -9,7 +9,7 @@ global.GlobalConfig = { debug: true };
 const
     Msg1 = defineMessages({
         increment: [
-            { delta: Spec.integer },
+            null,
             ({ delta }) => ({ delta })
         ],
         reset: null,
@@ -25,8 +25,8 @@ const
 describe('defineMessages', () => {
     it('should generate message factories that create valid messages', () => {
 
-        console.log(Msg1.increment.type);
-        console.log(Msg1.reset());
+        console.log(Msg1);
+        console.log(Msg1.increment({ delta: 1 }));
 
         process.exit(0);
         /*

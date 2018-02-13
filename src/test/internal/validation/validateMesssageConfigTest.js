@@ -10,10 +10,10 @@ describe('validateMessagesConfig', () => {
         const result = validateMessagesConfig({
             x: {
                 y: {
-                    z: [() => true, () => true]
+                    z: [null, () => true]
                 },
                 z: [
-                    { 1: Spec.string, 4: Spec.integer },
+                    null,
                     () => true
                 ] 
             },
