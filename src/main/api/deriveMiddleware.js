@@ -19,7 +19,7 @@ export default function deriveMiddleware(messageCreators) {
         }
     }
 
-    return ({ getState, dispatch }) => next => message => {
+    return subject => next => message => {
         let ret;
 
         if (message
@@ -28,7 +28,7 @@ export default function deriveMiddleware(messageCreators) {
             && typeof message.payload === 'function'
             && involvedTypes[message.type] === true) {
 
-            ret = message.payload({ getState, dispatch });
+            ret = message.payload(subject);
         } else {
             ret = next(message);
         }
