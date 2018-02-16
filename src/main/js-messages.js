@@ -1,15 +1,15 @@
 import defineMessages from './api/defineMessages';
-import deriveReducer from './api/deriveReducer';
-import deriveMiddleware from './api/deriveMiddleware';
+import deriveDispatcher from './api/deriveDispatcher';
+import deriveStore from './api/deriveStore';
 
 export {
     defineMessages,
-    deriveReducer,
-    deriveMiddleware
+    deriveDispatcher,
+    deriveStore
 };
 
 export default {
     defineMessages,
-    deriveReducer,
-    deriveMiddleware
+    deriveDispatcher,
+    deriveStore
 };

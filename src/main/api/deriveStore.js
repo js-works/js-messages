@@ -43,58 +43,76 @@ export default function deriveStore(messageCreators, createState = null) {
     return (...args) => {
         let
             state = createState === null ? args[0] : createState(...args),
-            listeners = [];
+            listeners = [],
+            handlers = [];
 
-        const store = Object.freeze({
-            getState() {
-                return state;
-            },
+        const
+            store = Object.freeze({
+                getState() {
+                    return state;
+                },
 
-            subscribe(listener) {
-                const handler = listener.bind(null);
+                subscribe(listener) {
+                    const handler = listener.bind(null);
 
-                listeners.push(handler);
+                    listeners.push(handler);
 
-                return () => {
-                    listeners = listeners.filter(it => it !== handler);
-                };
-            },
+                    return () => {
+                        listeners = listeners.filter(it => it !== handler);
+                    };
+                },
 
-            dispatch(message) {
-                let
-                    ret = null,
-                    newState = state;
+                dispatch(message) {
+                    let
+                        ret = null,
+                        newState = state;
 
-                if (message
-                    && involvedTypes[message.type] === true
-                    && typeof message === 'object'
-                    && typeof message.type === 'string'
-                    && message.payload !== null 
-                    && typeof message.payload === 'object') {
-                    
-                    if (typeof message.payload.update === 'function') {
-                        newState = message.payload.update(state, message);
+                    if (message
+                        && involvedTypes[message.type] === true
+                        && typeof message === 'object'
+                        && typeof message.type === 'string'
+                        && message.payload !== null 
+                        && typeof message.payload === 'object') {
+                        
+                        if (typeof message.payload.update === 'function') {
+                            newState = message.payload.update(state, message);
 
-                        if (newState !== state) {
-                            state = newState;
+                            if (newState !== state) {
+                                state = newState;
 
-                            for (let i = 0; i < listeners.length; ++i) {
-                                listeners[i]();
+                                for (let i = 0; i < listeners.length; ++i) {
+                                    listeners[i]();
+                                }
                             }
                         }
+                        
+                        if (typeof message.payload.effect === 'function') {
+                            ret = message.payload.effect(subject);
+                        }
                     }
-                    
-                    if (typeof message.payload.effect === 'function') {
-                        ret = message.payload.effect({
-                            getState: store.getState,
-                            dispatch: store.dispatch
-                        });
-                    }
-                }
 
-                return ret;
-            } 
-        });
+                    for (let i = 0; i < handlers.length; ++i) {
+                        handlers[i](message);
+                    }
+
+                    return ret;
+                } 
+            }),
+
+            subject = Object.freeze({
+                dispatch: store.dispatch,
+                getState: store.getState,
+
+                registerHandler: handler => {
+                    const observer = handler.bind();
+
+                    handlers.push(observer);
+
+                    return () => {
+                        handlers = handlers.filter(it => it !== observer);
+                    };
+                }
+            });
         
         return store;
     };
