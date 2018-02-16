@@ -1,13 +1,9 @@
-export default function deriveReducer(messageCreators, defaultValue) {
+const returnUndefined = () => {};
+
+export default function deriveDispatcher(messageCreators) {
     if (messageCreators === null || typeof messageCreators !== 'object') {
         throw new TypeError(
-            "[deriveReducer] First argument 'messageCreators' "
-                + 'has to be an object');
-    } else if (defaultValue !== undefined
-        && (defaultValue === null || typeof defaultValue !== 'object')) {
-
-        throw new TypeError(
-            "[deriveReducer] Optional second argument 'defaultValue' "
+            "[deriveDispatcher] First argument 'messageCreators' "
                 + 'has to be an object');
     }
 
@@ -25,16 +21,21 @@ export default function deriveReducer(messageCreators, defaultValue) {
         }
     }
 
-    return (state = defaultValue, message) => {
-        let ret = state;
+    return function dispatch(message) {
+        let ret;
 
         if (message
             && typeof message === 'object'
             && typeof message.type === 'string'
-            && typeof message.payload === 'function'
+            && message.payload
+            && typeof message.payload === 'object'
+            && typeof message.payload.effect === 'function'
             && involvedTypes[message.type] === true) {
 
-            ret = message.payload(state, message);
+            ret = message.payload.effect({
+                dispatch,
+                getState: returnUndefined
+            });
         }
 
         return ret;
