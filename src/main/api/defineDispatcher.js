@@ -1,6 +1,6 @@
 const returnUndefined = () => {};
 
-export default function deriveDispatcher(messageCreators) {
+export default function defineDispatcher(messageCreators) {
     if (messageCreators === null || typeof messageCreators !== 'object') {
         throw new TypeError(
             "[deriveDispatcher] First argument 'messageCreators' "
@@ -21,7 +21,7 @@ export default function deriveDispatcher(messageCreators) {
         }
     }
 
-    return function dispatch(message) {
+    return () => function dispatch(message) {
         let ret;
 
         if (message

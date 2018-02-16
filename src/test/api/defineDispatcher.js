@@ -2,7 +2,7 @@ import { describe, it } from 'mocha';
 import { expect } from 'chai';
 
 import defineMessages from '../../main/api/defineMessages';
-import deriveDispatcher from '../../main/api/deriveDispatcher';
+import defineDispatcher from '../../main/api/defineDispatcher';
 
 const
     output = [],
@@ -15,7 +15,7 @@ const
         })
     }),
 
-    dispatch = deriveDispatcher(actions);
+    dispatch = defineDispatcher(actions)();
 
 describe('deriveDispatcher', () => {
     it('should reduce state properly', () => {

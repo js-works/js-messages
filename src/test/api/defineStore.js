@@ -2,7 +2,7 @@ import { describe, it } from 'mocha';
 import { expect } from 'chai';
 
 import defineMessages from '../../main/api/defineMessages';
-import deriveStore from '../../main/api/deriveStore';
+import defineStore from '../../main/api/defineStore';
 
 const
     output = [],
@@ -21,7 +21,7 @@ const
         })
     }),
 
-    createStore = deriveStore(actions, createState),
+    createStore = defineStore(actions, createState),
     store = createStore();
 
 describe('deriveDispatcher', () => {
