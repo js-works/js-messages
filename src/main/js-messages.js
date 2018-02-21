@@ -4,6 +4,7 @@ import defineMessages from './api/defineMessages';
 import defineProcess from './api/defineProcess';
 import defineStore from './api/defineStore';
 import isEffect from './api/isEffect';
+import Effects from './api/Effects';
 
 // Symbol.obserable polyfil
 if (typeof Symbol === 'function') {
@@ -18,7 +19,8 @@ export {
     defineMessages,
     defineProcess,
     defineStore,
-    isEffect
+    isEffect,
+    Effects
 };
 
 export default {
@@ -27,5 +29,6 @@ export default {
     defineMessages,
     defineProcess,
     defineStore,
-    isEffect
+    isEffect,
+    Effects
 };
