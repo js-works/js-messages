@@ -1,3 +1,5 @@
+import isEffect from './isEffect';
+
 export default function deriveStore(messageCreators, createState = null) {
     if (messageCreators === null
         || typeof messageCreators !== 'object') {
@@ -44,7 +46,7 @@ export default function deriveStore(messageCreators, createState = null) {
         let
             state = createState === null ? args[0] : createState(...args),
             listeners = [],
-            handlers = [];
+            receivers = [];
 
         const
             store = Object.freeze({
@@ -53,27 +55,29 @@ export default function deriveStore(messageCreators, createState = null) {
                 },
 
                 subscribe(listener) {
-                    const handler = listener.bind(null);
+                    const receiver = listener.bind(null);
 
-                    listeners.push(handler);
+                    listeners.push(receiver);
 
                     return () => {
-                        listeners = listeners.filter(it => it !== handler);
+                        listeners = listeners.filter(it => it !== receiver);
                     };
                 },
 
                 dispatch(message) {
-                    let
-                        ret = null,
-                        newState = state;
+                    let ret = null;
 
-                    if (message
+                    if (isEffect(message)) {
+                        ret = message(subject);
+                    } else if (message
                         && involvedTypes[message.type] === true
                         && typeof message === 'object'
                         && typeof message.type === 'string'
                         && message.payload !== null 
                         && typeof message.payload === 'object') {
                         
+                        let newState = state;
+
                         if (typeof message.payload.update === 'function') {
                             newState = message.payload.update(state, message);
 
@@ -91,8 +95,8 @@ export default function deriveStore(messageCreators, createState = null) {
                         }
                     }
 
-                    for (let i = 0; i < handlers.length; ++i) {
-                        handlers[i](message);
+                    for (let i = 0; i < receivers.length; ++i) {
+                        receivers[i](message);
                     }
 
                     return ret;
@@ -103,13 +107,13 @@ export default function deriveStore(messageCreators, createState = null) {
                 dispatch: store.dispatch,
                 getState: store.getState,
 
-                registerHandler: handler => {
-                    const observer = handler.bind();
+                registerReceiver: receiver => {
+                    const observer = receiver.bind();
 
-                    handlers.push(observer);
+                    receivers.push(observer);
 
                     return () => {
-                        handlers = handlers.filter(it => it !== observer);
+                        receivers = receivers.filter(it => it !== observer);
                     };
                 }
             });

@@ -1,3 +1,5 @@
+import isEffect from './isEffect';
+
 const returnUndefined = () => {};
 
 export default function defineDispatcher(messageCreators) {
@@ -24,7 +26,9 @@ export default function defineDispatcher(messageCreators) {
     return () => function dispatch(message) {
         let ret;
 
-        if (message
+        if (isEffect(message)) {
+            ret = message({ dispatch, getState: returnUndefined }); // TODO
+        } else if (message
             && typeof message === 'object'
             && typeof message.type === 'string'
             && message.payload
