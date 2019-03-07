@@ -1,0 +1,8 @@
+{
+  "mode": "file",
+  "out": "dist/docs/api",
+  "name": "js-messages",
+  "theme": "minimal",
+  "ignoreCompilerErrors": "true"
+}
+
