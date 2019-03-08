@@ -2,7 +2,7 @@ import Signature from '../internal/types/Signature'
 import MessagesConfig from '../internal/types/MessagesConfig'
 import MessageInitializer from '../internal/types/MessageInitializer'
 
-type Func<A extends any[]> = (...args: A) => any
+type Func<A extends any[], R> = (...args: A) => R
 
 type MessageCreator<K, A extends any[], P, M> = {
   readonly type: K,
@@ -15,14 +15,28 @@ type MessageCreator<K, A extends any[], P, M> = {
 }
 
 type Sig<A extends any[], I extends MessageInitializer<any>>
-  = I extends Func<A>
+  = I extends Func<A, any>
     ? Signature<I>
-    : (I extends { payload: Func<A> }
+    : (I extends { payload: Func<A, any> }
       ? Signature<I['payload']>
       : []) 
 
+type PRet<I extends MessageInitializer<any>>
+  = I extends Func<any, any>
+    ? ReturnType<I> 
+    : (I extends { payload: Func<any, any> }
+      ? ReturnType<I['payload']>
+      : any) 
+
+type MRet<I extends MessageInitializer<any>>
+  = I extends Func<any, any>
+    ? ReturnType<I> 
+    : (I extends { meta: Func<any, any> }
+      ? ReturnType<I['meta']>
+      : any) 
+
 function defineMessages<T extends MessagesConfig>(config: T):
-  { [K in keyof T]: MessageCreator<K, Sig<any, T[K]>, any, any> }  {
+  { [K in keyof T]: MessageCreator<K, Sig<any, T[K]>, PRet<T[K]>, MRet<T[K]>> }  {
 
   const
     ret: any = {},
@@ -60,8 +74,9 @@ function defineMessages<T extends MessagesConfig>(config: T):
       }
     }
 
-    ret[key].type = key
-    ret[key].toString = () => key
+    Object.defineProperty(ret[key], 'type', {
+      value: key
+    })
   }
 
   return ret
