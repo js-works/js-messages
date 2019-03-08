@@ -1,11 +1,7 @@
-type PayloadCreator = (...args: any) => any
-type MetaCreator = (...args: any) => any
-type Validator = (...args: any) => true | false | null | Error
+import MessageInitializer from '../../internal/types/MessageInitializer'
 
 type MessagesConfig = {
-  [name: string]:
-    PayloadCreator
-      | { payload?: PayloadCreator, meta?: MetaCreator, validator?: Validator }
+  [name: string]: MessageInitializer<any>
 }
 
 export default MessagesConfig

@@ -1,11 +1,28 @@
 import Signature from '../internal/types/Signature'
 import MessagesConfig from '../internal/types/MessagesConfig'
+import MessageInitializer from '../internal/types/MessageInitializer'
 
-type Func = (...args: any[]) => any
+type Func<A extends any[]> = (...args: A) => any
+
+type MessageCreator<K, A extends any[], P, M> = {
+  readonly type: K,
+  
+  (...args: A): {
+    type: K,
+    payload?: P,
+    meta?: M
+  }
+}
+
+type Sig<A extends any[], I extends MessageInitializer<any>>
+  = I extends Func<A>
+    ? Signature<I>
+    : (I extends { payload: Func<A> }
+      ? Signature<I['payload']>
+      : []) 
 
 function defineMessages<T extends MessagesConfig>(config: T):
-  { [K in keyof T]: {type: K, (...args: Signature<T[K] extends { payload?: any }  ? T[K]['payload'] : T[K]>):
-    (T[K] extends Func ? { type: K, payload: ReturnType<T[K]>  } : (T[K] extends { payload?: Func, meta?: Func } ? { type: K, payload?: ReturnType<T[K]['payload']>, meta?: ReturnType<T[K]['meta']> } : never))}} {
+  { [K in keyof T]: MessageCreator<K, Sig<any, T[K]>, any, any> }  {
 
   const
     ret: any = {},

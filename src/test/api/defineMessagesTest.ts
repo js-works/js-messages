@@ -8,12 +8,12 @@ const Actions = defineMessages({
   action2: (value: number = 0) => value,
   
   action3: {
-    payload: (value = 21) => ({ value })
+    payload: (value: number = 21) => ({ value })
   },
 
   action4: {
-    payload: (value = 42) => ({ value }),
-    meta: (value = 42) => ({ half: value / 2})
+    payload: (value: number = 42) => ({ value }),
+    meta: (value: number = 42) => ({ half: value / 2})
   }
 })
 
