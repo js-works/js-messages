@@ -4,11 +4,6 @@ A small library to handle messages, message types and message creators
 (also known as "actions", "action types" and "action creators" in redux context).
 js-messages is written in TypeScript, everything is completely type safe.
 
-js-messages currently consists of two messages
-
-- `defineMessage`: To define one type of message / to create one message creator
-- `defineMessages`: To define multiple related messages / to create multipe message creators
-
 [![Licence](https://img.shields.io/badge/licence-LGPLv3-blue.svg?style=flat)](https://github.com/js-works/js-messages/blob/master/LICENSE)
 [![npm version](https://img.shields.io/npm/v/js-messages.svg?style=flat)](https://www.npmjs.com/package/js-messages)
 [![Build status](https://travis-ci.com/js-works/js-messages.svg)](https://travis-ci.org/js-works/js-messages)
@@ -19,6 +14,12 @@ js-messages currently consists of two messages
 npm install --save js-messages
 
 ## Usage
+
+js-messages currently consists of two functions:
+
+- `defineMessage`: To define one type of message / to create one message creator
+- `defineMessages`: To define multiple related messages / to create multipe message creators
+
 
 Example 1 (using `defineMessage`)
 
