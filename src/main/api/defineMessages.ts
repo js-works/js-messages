@@ -14,21 +14,21 @@ type MessageCreator<K, A extends any[], P, M> = {
   }
 }
 
-type Sig<A extends any[], I extends MessageInitializer<any>>
+type Arguments<A extends any[], I extends MessageInitializer<any>>
   = I extends Func<A, any>
     ? Signature<I>
     : (I extends { payload: Func<A, any> }
       ? Signature<I['payload']>
       : []) 
 
-type PRet<I extends MessageInitializer<any>>
+type Payload<I extends MessageInitializer<any>>
   = I extends Func<any, any>
     ? ReturnType<I> 
     : (I extends { payload: Func<any, any> }
       ? ReturnType<I['payload']>
       : any) 
 
-type MRet<I extends MessageInitializer<any>>
+type Meta<I extends MessageInitializer<any>>
   = I extends Func<any, any>
     ? ReturnType<I> 
     : (I extends { meta: Func<any, any> }
@@ -36,7 +36,7 @@ type MRet<I extends MessageInitializer<any>>
       : any) 
 
 function defineMessages<T extends MessagesConfig>(config: T):
-  { [K in keyof T]: MessageCreator<K, Sig<any, T[K]>, PRet<T[K]>, MRet<T[K]>> }  {
+  { [K in keyof T]: MessageCreator<K, Arguments<any, T[K]>, Payload<T[K]>, Meta<T[K]>> }  {
 
   const
     ret: any = {},

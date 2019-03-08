@@ -44,7 +44,6 @@
     "ts-loader": "^5.3.3",
     "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
-    "typedoc": "^0.14.1",
     "typescript": "^3.2.2"
   },
   "scripts": {
@@ -53,9 +52,8 @@
     "test": "nyc mocha -r ts-node/register src/test/**/*.ts",
     "test-watch": "mocha -w -r ts-node/register src/test/**/*.ts",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "docs": "shx rm -rf ./dist/docs && \"node_modules/.bin/cross-conf-env\" typedoc --options ./typedoc.json src/main/api/ -name \"js-messages vnpm_package_version\"",
     "zipsource": "shx rm -rf ./build/source && shx mkdir -p ./build/source && copyfiles -a ./* ./build/source && shx cp -r ./src ./build/source && shx mkdir -p ./dist/source && cd build/source && bestzip ../../dist/source/source.zip . && cd ../..",
-    "dist": "npm run clean && npm run test && npm run build && npm run docs && npm run zipsource"
+    "dist": "npm run clean && npm run test && npm run build && npm run zipsource"
   },
   "nyc": {
     "temp-directory": "./coverage/.nyc_output",
