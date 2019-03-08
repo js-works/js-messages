@@ -78,13 +78,13 @@ const Actions = defineMessages({
   completeTask: (id: number) => id,
   // for messages of shape { type: 'completeTask', payload: number }
 
-  saveToLocalStore: {
+  saveToLocalStorage: {
     payload: (tasks: Task[], key: string, user: string) => tasks,
     meta: (tasks: Task[], key: string, user: string) => ({ key, user })
   }
   // for messages of shape
   //   {
-  //     type: 'saveToLocalStore',
+  //     type: 'saveToLocalStorage',
   //     payload: Task[],
   //     meta: { key: string, user: string }
   //   }
