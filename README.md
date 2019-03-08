@@ -2,7 +2,7 @@
 
 A small library to handle messages, message types and message factories
 (also known as "actions", "action types" and "action creators" in redux context).
-js-messages is written in TypeScript, everything is completly type safe.
+js-messages is written in TypeScript, everything is completely type safe.
 
 [![Licence](https://img.shields.io/badge/licence-LGPLv3-blue.svg?style=flat)](https://github.com/js-works/js-messages/blob/master/LICENSE)
 [![npm version](https://img.shields.io/npm/v/js-messages.svg?style=flat)](https://www.npmjs.com/package/js-messages)
