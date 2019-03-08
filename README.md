@@ -1,8 +1,13 @@
 # js-messages
 
-A small library to handle messages, message types and message factories
+A small library to handle messages, message types and message creators
 (also known as "actions", "action types" and "action creators" in redux context).
 js-messages is written in TypeScript, everything is completely type safe.
+
+js-messages currently consists of two messages
+
+- `defineMessage`: To define one type of message / to create one message creator
+- `defineMessages`: To define multiple related messages / to create multipe message creators
 
 [![Licence](https://img.shields.io/badge/licence-LGPLv3-blue.svg?style=flat)](https://github.com/js-works/js-messages/blob/master/LICENSE)
 [![npm version](https://img.shields.io/npm/v/js-messages.svg?style=flat)](https://www.npmjs.com/package/js-messages)
@@ -15,10 +20,35 @@ npm install --save js-messages
 
 ## Usage
 
-Example 1:
+Example 1 (using `defineMessage`)
 
 ```javascript
-import defineMessages from 'js-messages'
+import { defineMessage } from 'js-messages'
+
+const
+  increment = defineMessage('increment'),
+  // for messages of shape { type: 'increment' }
+  
+  decrement = defineMessage('decrement'),
+  // for messages of shape { type: 'decrement' }
+
+  resetTo = defineMessage('resetTo', (value: number) => value)
+  // for messages of shape { type: 'resetTo', payload: number }
+
+expect(increment())
+  .to.eql({ type: 'increment' })
+
+expect(decrement())
+  .to.eql({ type: 'decrement' })
+
+expect(resetTo(0))
+  .to.eql({ type: 'resetTo', payload: 0 })
+```
+
+Example 2 (using `defineMessages`):
+
+```javascript
+import { defineMessages } from 'js-messages'
 
 const Actions = defineMessages({
   increment: {},
@@ -59,10 +89,10 @@ expect(Actions.resetType.type).to.eql('resetTo')
 expect(Actions.log.type).to.eql('log')
 ```
 
-Example 2:
+Example 3 (using `defineMessages`):
 
 ```javascript
-import defineMessages from 'js-messages'
+import { defineMessages } from 'js-messages'
 
 type Task = {
   id: number,
@@ -90,6 +120,7 @@ const Actions = defineMessages({
   //   }
 })
 ```
+
 ## License
 
 "js-messages" is licensed under LGPLv3.
