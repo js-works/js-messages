@@ -4,8 +4,8 @@ import MessagesConfig from '../internal/types/MessagesConfig'
 type Func = (...args: any[]) => any
 
 function defineMessages<T extends MessagesConfig>(config: T):
-  { [K in keyof T]: (...args: Signature<T[K] extends { payload?: any }  ? T[K]['payload'] : T[K]>) =>
-    (T[K] extends Func ? { type: K, payload: ReturnType<T[K]>  } : (T[K] extends { payload?: Func, meta?: Func } ? { type: K, payload?: ReturnType<T[K]['payload']>, meta?: ReturnType<T[K]['meta']> } : never)) } {
+  { [K in keyof T]: {type: K, (...args: Signature<T[K] extends { payload?: any }  ? T[K]['payload'] : T[K]>):
+    (T[K] extends Func ? { type: K, payload: ReturnType<T[K]>  } : (T[K] extends { payload?: Func, meta?: Func } ? { type: K, payload?: ReturnType<T[K]['payload']>, meta?: ReturnType<T[K]['meta']> } : never))}} {
 
   const
     ret: any = {},
