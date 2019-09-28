@@ -4,6 +4,35 @@ import MessageInitializer from '../internal/types/MessageInitializer'
 import MessageCreator from '../internal/types/MessageCreator'
 import buildMessageCreator from '../internal/buildMessageCreator';
 
+// --- defineMessages -----------------------------------------------
+
+function defineMessages<T extends MessagesConfig>(prefix: string, config: T):
+  { [K in keyof T]: MessageCreator<K, Arguments<any, T[K]>, Payload<T[K]>, Meta<T[K]>> }
+
+function defineMessages<T extends MessagesConfig>(config: T):
+  { [K in keyof T]: MessageCreator<K, Arguments<any, T[K]>, Payload<T[K]>, Meta<T[K]>> }
+
+
+function defineMessages(arg1: any, arg2?: any): any {
+  const
+    ret: any = {},
+    prefix: string = typeof arg1 === 'string' ? arg1 : '',
+    config: any = typeof arg1 === 'string' ? arg2 : arg1,
+    keys = Object.keys(config)
+
+  for (let i = 0; i < keys.length; ++i) {
+    const
+      key = keys[i],
+      type = !prefix ? key : `${prefix}/${key}`
+
+    ret[key] = buildMessageCreator(type, config[key])
+  }
+
+  return ret
+}
+
+// --- locals -------------------------------------------------------
+
 type Func<A extends any[], R> = (...args: A) => R
 
 type Arguments<A extends any[], I extends MessageInitializer<any>>
@@ -27,20 +56,6 @@ type Meta<I extends MessageInitializer<any>>
       ? ReturnType<I['meta']>
       : any) 
 
-function defineMessages<T extends MessagesConfig>(config: T):
-  { [K in keyof T]: MessageCreator<K, Arguments<any, T[K]>, Payload<T[K]>, Meta<T[K]>> }  {
-
-  const
-    ret: any = {},
-    keys = Object.keys(config)
-
-  for (let i = 0; i < keys.length; ++i) {
-    const key = keys[i]
-
-    ret[key] = buildMessageCreator(key, config[key])
-  }
-
-  return ret
-}
+// --- exports ------------------------------------------------------
 
 export default defineMessages

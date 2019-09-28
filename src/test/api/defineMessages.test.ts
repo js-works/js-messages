@@ -41,5 +41,19 @@ describe('defineMessages', () => {
 
     expect(Actions.action4(2))
       .to.eql({ type: 'action4', payload: { value: 2 }, meta: { half: 1 } })
+  }),
+  
+  it('should handle prefixes properly', () => {
+    const UserActions = defineMessages('users', {
+      addUser: (firstName: string, lastName: string) =>
+        ({ firstName, lastName })
+    })
+
+    expect(UserActions.addUser('Jane', 'Doe'))
+        .to.eql({ type: 'users/addUser', payload: { firstName: 'Jane', lastName: 'Doe' } })
+
+    expect(UserActions.addUser.type)
+        .to.eql('users/addUser')
   })
 })
+
