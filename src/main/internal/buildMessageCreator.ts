@@ -1,10 +1,7 @@
-import MessageInitializer from './types/MessageInitializer'
-import MessageCreator from './types/MessageCreator'
-
 // --- buildMessageCreator ------------------------------------------
 
 function buildMessageCreator<A extends any[]>
-  (type: string, initializer: MessageInitializer<A>): MessageCreator<A, any, any> {
+  (type: string, initializer: MessageInitializer<A>): MessageCreator<A> {
   
   let ret: any
 
@@ -44,6 +41,18 @@ function buildMessageCreator<A extends any[]>
 
   return ret
 }
+
+// --- local --------------------------------------------------------
+
+type MessageInitializer<A extends any[]> =
+  {
+    payload?: (...args: A) => any,
+    meta?: (...args: A) => any,
+    validate?: (args: A) => any
+  } | ((...args: A) => any)
+
+type MessageCreator<A extends any[]>
+  = (...args: A) => { type: string, payload?: any, meta?: any }
 
 // --- exports ------------------------------------------------------
 

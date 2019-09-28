@@ -1,6 +1,3 @@
-import Signature from '../internal/types/Signature'
-import MessagesConfig from '../internal/types/MessagesConfig'
-import MessageInitializer from '../internal/types/MessageInitializer'
 import buildMessageCreator from '../internal/buildMessageCreator';
 
 // --- defineMessages -----------------------------------------------
@@ -30,6 +27,17 @@ function defineMessages(arg1: any, arg2?: any): any {
 }
 
 // --- locals -------------------------------------------------------
+
+type MessagesConfig = {
+  [name: string]: MessageInitializer<any>
+}
+
+type MessageInitializer<A extends any[]> =
+  {
+    payload?: (...args: A) => any,
+    meta?: (...args: A) => any,
+    validate?: (args: A) => any
+  } | ((...args: A) => any)
 
 type MessageCreatorOf<T> =
   T extends {
