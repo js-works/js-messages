@@ -21,7 +21,7 @@ export default configs
 
 function createConfig(moduleFormat, productive) {
   return {
-    input: 'src/main/js-messages.ts',
+    input: 'src/main/index.ts',
 
     output: {
       file: productive

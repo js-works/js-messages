@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES5",
+    "strict": true,
     "noImplicitAny": true,
     "jsx": "react",
     "removeComments": true,
@@ -16,6 +17,6 @@
     ]
   },
   "files": [
-    "src/main/js-messages.ts"
+    "src/main/index.ts"
   ]
 }
