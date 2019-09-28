@@ -1,8 +1,8 @@
-type MessageCreator<K, A extends any[], P, M> = {
-  readonly type: K,
+type MessageCreator<A extends any[], P, M> = {
+  readonly type: string,
   
   (...args: A): {
-    type: K,
+    type: string,
     payload?: P,
     meta?: M
   }

@@ -1,8 +1,10 @@
 import MessageInitializer from './types/MessageInitializer'
 import MessageCreator from './types/MessageCreator'
 
-export default function buildMessageCreator<K extends String, A extends any[]>
-  (type: K, initializer: MessageInitializer<A> = null): MessageCreator<K, A, any, any> {
+// --- buildMessageCreator ------------------------------------------
+
+function buildMessageCreator<A extends any[]>
+  (type: string, initializer: MessageInitializer<A>): MessageCreator<A, any, any> {
   
   let ret: any
 
@@ -42,3 +44,7 @@ export default function buildMessageCreator<K extends String, A extends any[]>
 
   return ret
 }
+
+// --- exports ------------------------------------------------------
+
+export default buildMessageCreator

@@ -7,11 +7,10 @@ import buildMessageCreator from '../internal/buildMessageCreator';
 // --- defineMessages -----------------------------------------------
 
 function defineMessages<T extends MessagesConfig>(prefix: string, config: T):
-  { [K in keyof T]: MessageCreator<K, Arguments<any, T[K]>, Payload<T[K]>, Meta<T[K]>> }
+  { [K in keyof T]: MessageCreator<Arguments<any, T[K]>, Payload<T[K]>, Meta<T[K]>> }
 
 function defineMessages<T extends MessagesConfig>(config: T):
-  { [K in keyof T]: MessageCreator<K, Arguments<any, T[K]>, Payload<T[K]>, Meta<T[K]>> }
-
+  { [K in keyof T]: MessageCreator<Arguments<any, T[K]>, Payload<T[K]>, Meta<T[K]>> }
 
 function defineMessages(arg1: any, arg2?: any): any {
   const
