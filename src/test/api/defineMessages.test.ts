@@ -17,8 +17,6 @@ const Actions = defineMessages({
   }
 })
 
-const x = Actions.action1()
-
 describe('defineMessages', () => {
   it('should create messages with neigther payload nor meta', () => {
     expect(Actions.action1())
