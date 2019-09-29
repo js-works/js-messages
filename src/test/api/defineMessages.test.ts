@@ -5,7 +5,7 @@ import defineMessages from '../../main/api/defineMessages'
 
 const Actions = defineMessages({
   action1: {},
-  action2: (value: number = 0) => value,
+  action2: (value = 0) => value,
   
   action3: {
     payload: (value: number = 21) => ({ value })
