@@ -1,67 +1,48 @@
+import Signature from '../internal/types/Signature'
+import MessagesConfig from '../internal/types/MessagesConfig'
+import MessageInitializer from '../internal/types/MessageInitializer'
+import MessageCreator from '../internal/types/MessageCreator'
 import buildMessageCreator from '../internal/buildMessageCreator';
 
-// --- defineMessages -----------------------------------------------
+type Func<A extends any[], R> = (...args: A) => R
 
-function defineMessages<T extends MessagesConfig>(prefix: string, config: T):
-  { [K in keyof T]: MessageCreatorOf<T[K]> & { type: string }}
+type Arguments<A extends any[], I extends MessageInitializer<any>>
+  = I extends Func<A, any>
+    ? Signature<I>
+    : I extends { payload: Func<A, any> }
+      ? Signature<I['payload']>
+      : I extends { meta: Func<A, any> }
+        ? Signature<I['meta']>
+        : []
 
-function defineMessages<T extends MessagesConfig>(config: T):
-  { [K in keyof T]: MessageCreatorOf<T[K]> & { type: string } }
+type Payload<I extends MessageInitializer<any>>
+  = I extends Func<any, any>
+    ? ReturnType<I> 
+    : (I extends { payload: Func<any, any> }
+      ? ReturnType<I['payload']>
+      : any) 
 
-function defineMessages(arg1: any, arg2?: any): any {
+type Meta<I extends MessageInitializer<any>>
+  = I extends Func<any, any>
+    ? ReturnType<I> 
+    : (I extends { meta: Func<any, any> }
+      ? ReturnType<I['meta']>
+      : any) 
+
+function defineMessages<C extends MessagesConfig>(config: C):
+  { [T in keyof C]: MessageCreator<T, Payload<C[T]>, Meta<C[T]>, Arguments<any, C[T]>> }  {
+
   const
     ret: any = {},
-    prefix: string = typeof arg1 === 'string' ? arg1 : '',
-    config: any = typeof arg1 === 'string' ? arg2 : arg1,
     keys = Object.keys(config)
 
   for (let i = 0; i < keys.length; ++i) {
-    const
-      key = keys[i],
-      type = !prefix ? key : `${prefix}/${key}`
+    const key = keys[i]
 
-    ret[key] = buildMessageCreator(type, config[key])
+    ret[key] = buildMessageCreator(key, config[key])
   }
 
   return ret
 }
-
-// --- locals -------------------------------------------------------
-
-type MessagesConfig = {
-  [name: string]: MessageInitializer<any>
-}
-
-type MessageInitializer<A extends any[]> =
-  {
-    payload?: (...args: A) => any,
-    meta?: (...args: A) => any,
-    validate?: (args: A) => any
-  } | ((...args: A) => any)
-
-type MessageCreatorOf<T> =
-  T extends {
-      payload: (...args: infer A) => infer P,
-      meta: (...args: infer A) => infer M,
-      validate?: (...args: infer A) => boolean | null | Error
-    }
-  ? (...args: A) => { type: string, payload: P, meta: M}
-  : T extends {
-      meta: (...args: infer A) => infer M,
-      validate?: (...args: infer A) => boolean | null | Error
-    }
-  ? (...args: A) => { type: string, meta: M}
-  : T extends {
-    payload: (...args: infer A) => infer P,
-    validate?: (...args: infer A) => boolean | null | Error
-  } 
-  ? (...args: A) => { type: string, payload: P }
-  : T extends (...args: infer A) => infer P
-  ? (...args: A) => { type: string, payload: P }
-  : T extends {}
-  ? () => { type: string}
-  : never
-
-// --- exports ------------------------------------------------------
 
 export default defineMessages

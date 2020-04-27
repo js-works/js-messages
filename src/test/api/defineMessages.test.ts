@@ -3,9 +3,16 @@ import { expect } from 'chai'
 
 import defineMessages from '../../main/api/defineMessages'
 
+type MessagesOf<T> =
+  T extends { [k: string]: () => infer R }
+    ? { [K in keyof T]: R  }[keyof T]
+    : never
+
+type X = MessagesOf<typeof Actions>
+
 const Actions = defineMessages({
   action1: {},
-  action2: (value = 0) => value,
+  action2: (value: number = 0) => value,
   
   action3: {
     payload: (value: number = 21) => ({ value })
@@ -41,19 +48,5 @@ describe('defineMessages', () => {
 
     expect(Actions.action4(2))
       .to.eql({ type: 'action4', payload: { value: 2 }, meta: { half: 1 } })
-  }),
-  
-  it('should handle prefixes properly', () => {
-    const UserActions = defineMessages('users', {
-      addUser: (firstName: string, lastName: string) =>
-        ({ firstName, lastName })
-    })
-
-    expect(UserActions.addUser('Jane', 'Doe'))
-        .to.eql({ type: 'users/addUser', payload: { firstName: 'Jane', lastName: 'Doe' } })
-
-    expect(UserActions.addUser.type)
-        .to.eql('users/addUser')
   })
 })
-

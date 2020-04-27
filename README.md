@@ -17,36 +17,10 @@ npm install --save js-messages
 
 js-messages currently consists of two functions:
 
-- `defineMessage`: To define one type of message / to create one message creator
-- `defineMessages`: To define multiple related messages / to create multipe message creators
+- `defineMessages`: To define multiple related messages represented by message creators
 
 
-Example 1 (using `defineMessage`)
-
-```javascript
-import { defineMessage } from 'js-messages'
-
-const
-  increment = defineMessage('increment'),
-  // for messages of shape { type: 'increment' }
-  
-  decrement = defineMessage('decrement'),
-  // for messages of shape { type: 'decrement' }
-
-  resetTo = defineMessage('resetTo', (value: number) => value)
-  // for messages of shape { type: 'resetTo', payload: number }
-
-expect(increment())
-  .to.eql({ type: 'increment' })
-
-expect(decrement())
-  .to.eql({ type: 'decrement' })
-
-expect(resetTo(0))
-  .to.eql({ type: 'resetTo', payload: 0 })
-```
-
-Example 2 (using `defineMessages`):
+Example 1:
 
 ```javascript
 import { defineMessages } from 'js-messages'
@@ -90,7 +64,7 @@ expect(Actions.resetType.type).to.eql('resetTo')
 expect(Actions.log.type).to.eql('log')
 ```
 
-Example 3 (using `defineMessages`):
+Example 2:
 
 ```javascript
 import { defineMessages } from 'js-messages'
