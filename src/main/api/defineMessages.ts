@@ -5,24 +5,22 @@ type MessageInitializer<A extends any[]> =
     | { payload?: Func<A, any>, meta?:Func<A, any> }
 
 type MessagesConfig = {
-  [type: string]:
-    Func<any, any>
-      | { payload?: Func<any, any>, meta?: Func<any, any> } 
+  [type: string]: MessageInitializer<any[]>
 }
 
-type MessageCreatorType<T, X> =
-  X extends Func<infer A, infer P>
+type MessageCreatorType<T, I extends MessageInitializer<any[]>> =
+  I extends Func<infer A, infer P>
     ? { (...args: A): { type: T, payload: P }, type: T }
-    : X extends { payload: Func<infer A, infer P>, meta: Func<infer A, infer M> }
+    : I extends { payload: Func<infer A, infer P>, meta: Func<infer A, infer M> }
       ? { (...args: A): { type: T, payload: P, meta: M }, type: T }
-      : X extends { payload: Func<infer A, infer P> }
+      : I extends { payload: Func<infer A, infer P> }
         ? { (...args: A): { type: T, payload: P }, type: T }
-        : X extends { meta: Func<infer A, infer M> }
+        : I extends { meta: Func<infer A, infer M> }
           ? { (...args: A): { type: T, meta: M }, type: T }
           : { (): { type: T }, type: T }
 
 function defineMessages<C extends MessagesConfig>(config: C):
-  { [T in keyof C]: MessageCreatorType<T, C[T]> }  {
+  { [T in keyof C]: MessageCreatorType<T, C[T]> } {
 
   const
     ret: any = {},
@@ -42,8 +40,7 @@ function defineMessages<C extends MessagesConfig>(config: C):
         return { type, payload }
       }
     } else {
-      const { payload: getPayload, meta: getMeta } =
-        initializer as { payload?: Func<any, any>, meta?: Func<any, any> }
+      const { payload: getPayload, meta: getMeta } = initializer
 
       ret[type] = function (/* arguments */) {
         const msg: any = { type: type }
