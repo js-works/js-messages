@@ -8,14 +8,14 @@ type Func<A extends any[], R> = (...args: A) => R
 
 type MessageCreatorType<T, X extends MessageInitializer<any>> =
   X extends Func<infer A, infer P>
-    ? (...args: A) => { type: T, payload: P }
+    ? { (...args: A): { type: T, payload: P }, type: T }
     : X extends { payload: Func<infer A, infer P>, meta: Func<infer A, infer M> }
-      ? (...args: A) => { type: T, payload: P, meta: M }
+      ? { (...args: A): { type: T, payload: P, meta: M }, type: T }
       : X extends { payload: Func<infer A, infer P> }
-        ? (...args: A) => { type: T, payload: P }
+        ? { (...args: A): { type: T, payload: P }, type: T }
         : X extends { meta: Func<infer A, infer M> }
-          ? (...args: A) => { type: T, meta: M }
-          : () => { type: T }
+          ? { (...args: A): { type: T, meta: M }, type: T }
+          : { (): { type: T }, type: T }
 
 function defineMessages<C extends MessagesConfig>(config: C):
   { [T in keyof C]: MessageCreatorType<T, C[T]> }  {
