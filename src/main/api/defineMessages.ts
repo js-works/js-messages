@@ -56,7 +56,7 @@ function defineMessages(/* arguments */) {
       ret[key] = function (/* arguments */) {
         const payload = getPayload.apply(null, arguments as any)
 
-        return group ? {type, group, kind, payload } : { type, payload }
+        return group ? { type, group, kind, payload } : { type, payload }
       }
     } else {
       const { payload: getPayload, meta: getMeta } = initializer
@@ -90,8 +90,8 @@ function defineMessages(/* arguments */) {
         value: group
       })
 
-      Object.defineProperty(ret[key], 'key', {
-        value: key
+      Object.defineProperty(ret[key], 'kind', {
+        value: kind
       })
     }
   }
