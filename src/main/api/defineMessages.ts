@@ -8,7 +8,7 @@ type MessagesConfig = {
   [type: string]: MessageInitializer<any[]>
 }
 
-type MessageCreatorType<T, I extends MessageInitializer<any[]>> =
+type MessageCreatorType<T /* extends string */, I extends MessageInitializer<any[]>> = // TODO
   I extends Func<infer A, infer P>
     ? { (...args: A): { type: T, payload: P }, type: T }
     : I extends { payload: Func<infer A, infer P>, meta: Func<infer A, infer M> }
@@ -19,31 +19,55 @@ type MessageCreatorType<T, I extends MessageInitializer<any[]>> =
           ? { (...args: A): { type: T, meta: M }, type: T }
           : { (): { type: T }, type: T }
 
+type GroupMessageCreatorType<G extends string, K /* extends string */, I extends MessageInitializer<any[]>> = // TODO
+  I extends Func<infer A, infer P>
+    ? { (...args: A): { type: string, payload: P }, type: string, group: G, kind: K }
+    : I extends { payload: Func<infer A, infer P>, meta: Func<infer A, infer M> }
+      ? { (...args: A): { type: string, payload: P, meta: M }, type: string, group: G, kind: K }
+      : I extends { payload: Func<infer A, infer P> }
+        ? { (...args: A): { type: string, payload: P }, type: string, group: G, kind: K }
+        : I extends { meta: Func<infer A, infer M> }
+          ? { (...args: A): { type: string, meta: M }, type: string, group: G, kind: K }
+          : { (): { type: string }, type: string }
+
 function defineMessages<C extends MessagesConfig>(config: C):
-  { [T in keyof C]: MessageCreatorType<T, C[T]> } {
+  { [T in keyof C]: MessageCreatorType<T, C[T]> }
 
+function defineMessages<G extends string, C extends MessagesConfig>(group: G, config: C):
+  { [K in keyof C]: GroupMessageCreatorType<G, K, C[K]> }
+
+function defineMessages(/* arguments */) {
   const
+    config = arguments.length === 1 ? arguments[0] : arguments[1],
+    group = arguments.length === 1 ? null : arguments[0],
     ret: any = {},
-    types = Object.keys(config)
+    keys = Object.keys(config)
 
-  for (let i = 0; i < types.length; ++i) {
+  for (let i = 0; i < keys.length; ++i) {
     const
-      type = types[i],
-      initializer = config[type]
+      key = keys[i],
+      type = group ? `${group}.${key}` : key,
+      kind = group ? key : null,
+      initializer = config[key]
 
     if (typeof  initializer === 'function') {
       const getPayload = initializer as Func<any, any>
       
-      ret[type] = function (/* arguments */) {
+      ret[key] = function (/* arguments */) {
         const payload = getPayload.apply(null, arguments as any)
 
-        return { type, payload }
+        return group ? {type, group, kind, payload } : { type, payload }
       }
     } else {
       const { payload: getPayload, meta: getMeta } = initializer
 
-      ret[type] = function (/* arguments */) {
-        const msg: any = { type: type }
+      ret[key] = function (/* arguments */) {
+        const msg: any = { type }
+        
+        if (group) {
+          msg.group = group
+          msg.kind = kind
+        }
 
         if (getPayload) {
           msg.payload = getPayload.apply(null, arguments as any)
@@ -57,9 +81,19 @@ function defineMessages<C extends MessagesConfig>(config: C):
       }
     }
 
-    Object.defineProperty(ret[type], 'type', {
+    Object.defineProperty(ret[key], 'type', {
       value: type
     })
+
+    if (group) {
+      Object.defineProperty(ret[key], 'group', {
+        value: group
+      })
+
+      Object.defineProperty(ret[key], 'key', {
+        value: key
+      })
+    }
   }
 
   return ret
