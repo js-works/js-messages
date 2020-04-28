@@ -1,5 +1,15 @@
+// functions
+import defineMessage from './api/defineMessage'
 import defineMessages from './api/defineMessages'
 
+// types
+import MessageOf from './api/MessageOf'
+
 export {
-  defineMessages
+  // functions
+  defineMessage,
+  defineMessages,
+
+  // types
+  MessageOf
 }
