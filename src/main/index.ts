@@ -3,7 +3,7 @@ import defineMessage from './api/defineMessage'
 import defineMessages from './api/defineMessages'
 
 // types
-import MessageOf from './api/MessageOf'
+import MessageType from './api/MessageType'
 
 export {
   // functions
@@ -11,5 +11,5 @@ export {
   defineMessages,
 
   // types
-  MessageOf
+  MessageType
 }

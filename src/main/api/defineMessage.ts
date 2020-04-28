@@ -2,10 +2,16 @@ import Func from '../internal/Func'
 import MessageInitializer from '../internal/MessageInitializer'
 import MessageCreatorType from '../internal/MessageCreatorType'
 
-function defineMessage<T extends string, I extends MessageInitializer<any[]>>(
+function defineMessage<T extends string, I extends MessageInitializer<any>>(
+  type: T
+): MessageCreatorType<T, {}>
+
+function defineMessage<T extends string, I extends MessageInitializer<any>>(
   type: T,
-  initializer?: I
-): MessageCreatorType<T, I> {
+  initializer: I
+): MessageCreatorType<T, I>
+
+function defineMessage(type: any, initializer?: any) {
   let ret: any
 
   if (!initializer) {
