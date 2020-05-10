@@ -3,7 +3,7 @@ import State from '../internal/types/State'
 import Message from '../internal/types/Message'
 import When from '../internal/types/When'
 
-export default function createReducer<S extends State>(initialState: S, whens: When<S>[]) {
+export default function createReducer<S extends Readonly<State>>(initialState: S, whens: When<S>[]) {
   const reducers: any = {}
 
   whens.forEach(({ type, handle}) => {

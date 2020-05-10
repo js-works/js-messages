@@ -7,9 +7,9 @@ import when from '../../main/api/when'
 
 const CounterMsg = defineMessages({
   increment: (delta: number = 1) => ({ delta }),
-  decrement: (delta: number = 1) => ({ delta })
+  decrement: (delta: number = 1) => ({ delta }),
+  reset: (count: number = 0) => ({ count })
 })
-
 
 const reduce = createReducer({ count: 0 }, [
   when(CounterMsg.increment, (state, { delta }) => {
@@ -19,6 +19,10 @@ const reduce = createReducer({ count: 0 }, [
   when(CounterMsg.decrement, (state, { delta }) => {
     return { count: state.count - delta }
   }),
+
+  when(CounterMsg.reset, (state, { count }) => {
+    return { count }
+  })
 ])
 
 describe('createReducer', () => {
@@ -31,5 +35,11 @@ describe('createReducer', () => {
     
     expect(reduce({ count: 42 }, CounterMsg.decrement(2)))
       .to.eql({ count: 40 })
+
+    expect(reduce({ count: 100 }, CounterMsg.reset()))
+      .to.eql({ count: 0 })
+    
+    expect(reduce({ count: 200 }, CounterMsg.reset(100)))
+      .to.eql({ count: 100 })
   })
 })
