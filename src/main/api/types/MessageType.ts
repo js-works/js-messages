@@ -1,5 +1,4 @@
-import MessageCreatorType from '../internal/MessageCreatorType'
-import MessageInitializer from '../internal/MessageInitializer'
+import MessageCreatorType from '../../internal/types/MessageCreatorType'
 
 type MessageType<X> =
   X extends MessageCreatorType<any, any>

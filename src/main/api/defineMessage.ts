@@ -1,6 +1,6 @@
-import Func from '../internal/Func'
-import MessageInitializer from '../internal/MessageInitializer'
-import MessageCreatorType from '../internal/MessageCreatorType'
+import Func from '../internal/types/Func'
+import MessageInitializer from '../internal/types/MessageInitializer'
+import MessageCreatorType from '../internal/types/MessageCreatorType'
 
 function defineMessage<T extends string, I extends MessageInitializer<any>>(
   type: T

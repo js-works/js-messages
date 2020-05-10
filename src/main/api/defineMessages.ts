@@ -1,6 +1,6 @@
 import defineMessage from './defineMessage'
-import Func from '../internal/Func'
-import MessageCreatorType from '../internal/MessageCreatorType'
+import Func from '../internal/types/Func'
+import MessageCreatorType from '../internal/types/MessageCreatorType'
 
 type MessageInitializer<A extends any[]> =
   Func<A, any>
