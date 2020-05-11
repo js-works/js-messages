@@ -1,4 +1,5 @@
 // functions
+import combineReducers from './api/combineReducers'
 import createImmerReducer from './api/createImmerReducer'
 import createReducer from './api/createReducer'
 import defineMessage from './api/defineMessage'
@@ -10,6 +11,7 @@ import MessageType from './api/types/MessageType'
 
 export {
   // functions
+  combineReducers,
   createImmerReducer,
   createReducer,
   defineMessage,
