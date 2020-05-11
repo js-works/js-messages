@@ -23,7 +23,7 @@ const
   task2 = tasks[1]
 
 describe('update', () => {
-  it('should perform a "set" operation properly', () => {
+  it('should perform a "set" operation properly on objects', () => {
     const result = update(state).path('login', 'isAdmin').set(false)
     
     expect(result)
@@ -36,7 +36,7 @@ describe('update', () => {
       })
   })
   
-  it('should perform a "map" operation properly', () => {
+  it('should perform a "map" operation properly on objects', () => {
     const result = update(state).path('login', 'isAdmin').map(it => !it)
     
     expect(result)
@@ -44,6 +44,23 @@ describe('update', () => {
         ...state,
         login: {
           ...state.login,
+          isAdmin: false
+        }
+      })
+  })
+  
+  it('should perform multiple updates properly', () => {
+    const result = update(state).modify(path => [
+       path('login', 'username').set('John Doe') as any,
+       path('login', 'isAdmin').map(it => !it) as any,
+    ])
+    
+    expect(result)
+      .to.eql({
+        ...state,
+        login: {
+          ...state.login,
+          username: 'John Doe',
           isAdmin: false
         }
       })

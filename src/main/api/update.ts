@@ -18,8 +18,51 @@ class Updater<S extends State> {
     return new Cursor(this._state, args)
   }
 
-  modify(f: (path: Path<S>) => any[]): S {
-    return null as any // TODO
+  modify(getUpdates: (createPath: Path<S>) => Update<S, any>[]): S {
+    const
+      createPath = (...path: string[]) => new XXX(this._state, path),
+      updates = getUpdates(createPath as any) // TODO
+
+    let ret = this._state
+
+    updates.forEach(update => {
+      ret = update.perform(ret)
+    })
+
+    return ret
+  }
+}
+
+class XXX<S extends State, T> {
+  private _state: S
+  private _path: string[]
+
+  constructor(state: S, path: string[]) {
+    this._state = state
+    this._path = path
+  }
+
+  map(mapper: (value: T) => T): S {
+    return new Update(this._path, mapper) as any // TODO
+  }
+
+  set(newValue: T) {
+    return new Update(this._path, () => newValue) as any // TODO
+  }
+}
+
+
+class Update<S extends State, T> {
+  _path: string[]
+  _mapper: (value: T) => T
+
+  constructor(path: string[], mapper: (value: T) => T) {
+    this._path = path
+    this._mapper = mapper
+  }
+
+  perform(state: S) {
+    return performUpdate(state, this._path, this._mapper)
   }
 }
 
