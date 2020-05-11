@@ -4,6 +4,7 @@ import createImmerReducer from './api/createImmerReducer'
 import createReducer from './api/createReducer'
 import defineMessage from './api/defineMessage'
 import defineMessages from './api/defineMessages'
+import update from './api/update'
 import when from './api/when'
 
 // types
@@ -16,6 +17,7 @@ export {
   createReducer,
   defineMessage,
   defineMessages,
+  update,
   when,
 
   // types
