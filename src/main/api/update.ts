@@ -1,84 +1,49 @@
-import { pseudoRandomBytes } from "crypto"
-
 export default update
 
-
-function update<S extends State>(state: S, getUpdates: (createPath: Path<S>) => Update<S, any>[]): S
-function update<S extends State>(state: S): CreatePath<S>
-
+function update<S extends State>(state: S, getUpdates: (select: Selector2<S>) => Update<S, any>[]): S
+function update<S extends State>(state: S): Selector<S>
 function update<S extends State>(state: S, arg2?: any): any {
   let ret: any
   
   if (!arg2) {
-    ret = createPath(state)
+    ret = select(state)
   } else {
     const
-      createPath = (...path: string[]) => new XXX(state, path),
-      updates = arg2(createPath as any) // TODO
+      select = (...path: string[]) => new ObjectModifier2(state, path),
+      updates = arg2(select as any) // TODO
 
-    return performUpdates(state, updates.map((update: any) => { // TODO
-      return { path: update._path, mapper: update._mapper }
-    }))
+    return performUpdates(state, updates)
   }
 
   return ret
 }
 
-type CreatePath<S extends State> = {
-  <K1 extends keyof S>(k1: K1): Cursor<S, S[K1]>,
-  <K1 extends keyof S, K2 extends keyof S[K1]>(k1: K1, k2: K2): Cursor<S, S[K1][K2]>,
-  <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2]>(k1: K1, k2: K2, k3: K3): Cursor<S, S[K1][K2][K3]>,
-  <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3]>(k1: K1, k2: K2, k3: K3, k4: K4): Cursor<S, S[K1][K2][K3][K4]>,
-  <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3], K5 extends keyof S[K1][K2][K3][K4]>(k1: K1, k2: K2, k3: K3, k4: K4, k5: K5): Cursor<S, S[K1][K2][K3][K4][K5]>,
+type Selector<S extends State> = {
+  <K1 extends keyof S>(k1: K1): ObjectModifier<S, S[K1]>,
+  <K1 extends keyof S, K2 extends keyof S[K1]>(k1: K1, k2: K2): ObjectModifier<S, S[K1][K2]>,
+  <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2]>(k1: K1, k2: K2, k3: K3): ObjectModifier<S, S[K1][K2][K3]>,
+  <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3]>(k1: K1, k2: K2, k3: K3, k4: K4): ObjectModifier<S, S[K1][K2][K3][K4]>,
+  <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3], K5 extends keyof S[K1][K2][K3][K4]>(k1: K1, k2: K2, k3: K3, k4: K4, k5: K5): ObjectModifier<S, S[K1][K2][K3][K4][K5]>,
 }
 
-function createPath<S extends State>(state: S) {
-  function path<K1 extends keyof S>(k1: K1): Cursor<S, S[K1]>
-  function path<K1 extends keyof S, K2 extends keyof S[K1]>(k1: K1, k2: K2): Cursor<S, S[K1][K2]>
-  function path<K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2]>(k1: K1, k2: K2, k3: K3): Cursor<S, S[K1][K2][K3]>
-  function path<K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3]>(k1: K1, k2: K2, k3: K3, k4: K4): Cursor<S, S[K1][K2][K3][K4]>
-  function path<K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3], K5 extends keyof S[K1][K2][K3][K4]>(k1: K1, k2: K2, k3: K3, k4: K4, k5: K5): Cursor<S, S[K1][K2][K3][K4][K5]>
-  function path(...args: any[]): Cursor<S, any> {
-    return new Cursor(state, args)
-  }
-
-  return path
+type Selector2<S extends State> = {
+  <K1 extends keyof S>(k1: K1): ObjectModifier2<S, S[K1]>,
+  <K1 extends keyof S, K2 extends keyof S[K1]>(k1: K1, k2: K2): ObjectModifier2<S, S[K1][K2]>,
+  <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2]>(k1: K1, k2: K2, k3: K3): ObjectModifier2<S, S[K1][K2][K3]>,
+  <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3]>(k1: K1, k2: K2, k3: K3, k4: K4): ObjectModifier2<S, S[K1][K2][K3][K4]>,
+  <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3], K5 extends keyof S[K1][K2][K3][K4]>(k1: K1, k2: K2, k3: K3, k4: K4, k5: K5): ObjectModifier2<S, S[K1][K2][K3][K4][K5]>,
 }
 
-class XXX<S extends State, T> {
-  private _state: S
-  private _path: string[]
-
-  constructor(state: S, path: string[]) {
-    this._state = state
-    this._path = path
-  }
-
-  map(mapper: (value: T) => T): S {
-    return new Update(this._path, mapper) as any // TODO
-  }
-
-  set(newValue: T) {
-    return new Update(this._path, () => newValue) as any // TODO
-  }
+function select<S extends State>(state: S): Selector<S> {
+  return (...args: any[]) => new ObjectModifier(state, args) as any // TODO
 }
 
-
-class Update<S extends State, T> {
-  _path: string[]
-  _mapper: (value: T) => T
-
-  constructor(path: string[], mapper: (value: T) => T) {
-    this._path = path
-    this._mapper = mapper
-  }
-
-  perform(state: S) {
-    return performUpdate(state, this._path, this._mapper)
-  }
+type Update<S extends State, T> = {
+  path: string[],
+  mapper: (value: T) => T // TODO
 }
 
-class Cursor<S extends State, T> {
+class ObjectModifier<S extends State, T> {
   _state: S
   _path: string[]
 
@@ -96,12 +61,22 @@ class Cursor<S extends State, T> {
   }
 }
 
-type Path<S extends State> = {
-  <K1 extends keyof S>(k1:  K1): Cursor<S, S[K1]>
-  <K1 extends keyof S, K2 extends keyof S[K1]>(k1: K1, k2: K2): Cursor<S, S[K1][K2]>
-  <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2]>(k1: K1, k2: K2, k3: K3): Cursor<S, S[K1][K2][K3]>
-  <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3]>(k1: K1, k2: K2, k3: K3, k4: K4): Cursor<S, S[K1][K2][K3][K4]>
-  <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3], K5 extends keyof S[K1][K2][K3][K4]>(k1: K1, k2: K2, k3: K3, k4: K4, k5: K5): Cursor<S, S[K1][K2][K3][K4][K5]>
+class ObjectModifier2<S extends State, T> {
+  private _state: S
+  private _path: string[]
+
+  constructor(state: S, path: string[]) {
+    this._state = state
+    this._path = path
+  }
+
+  map(mapper: (value: T) => T) {
+    return { path: this._path, mapper }
+  }
+
+  set(newValue: T) {
+    return { path: this._path, mapper: () => newValue } 
+  }
 }
 
 function performUpdates<S extends State>(state: S, updates: { path: string[], mapper: (value: any) => any }[]) {
