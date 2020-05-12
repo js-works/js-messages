@@ -1,21 +1,25 @@
 export default update
 
-function update<S extends State>(state: S, getUpdates: (select: Selector2<S>) => Update<S, any>[]): S
-function update<S extends State>(state: S): Selector<S>
-function update<S extends State>(state: S, arg2?: any): any {
-  let ret: any
-  
-  if (!arg2) {
-    ret = select(state)
-  } else {
-    const
-      select = (...path: string[]) => new ObjectModifier2(state, path),
-      updates = arg2(select as any) // TODO
+function update<S extends State>(state: S): Selector<S> {
+  return select(state)
+}
 
-    return performUpdates(state, updates)
-  }
+update.multiple = <S extends State>(state: S, getUpdates: (select: Selector2<S>) => Update<S, any>[]): S => {
+  const
+    select = (...path: string[]) => new ObjectModifier2(state, path),
+    updates = getUpdates(select as any) // TODO
 
-  return ret
+  return performUpdates(state, updates)
+}
+
+update.imperative = <S extends State>(state: S, gatherUpdates: (modify: Selector3<S>) => void): S => { // TODO
+  const
+    updates: Update<S, any>[] = [],
+    modify = (...path: string[]) => new ObjectModifier3(state, path, (update: any) => updates.push(update)) // TODO
+   
+  gatherUpdates(modify as any) // TODO
+
+  return performUpdates(state, updates)
 }
 
 type Selector<S extends State> = {
@@ -28,6 +32,14 @@ type Selector<S extends State> = {
 
 type Selector2<S extends State> = {
   <K1 extends keyof S>(k1: K1): ObjectModifier2<S, S[K1]>,
+  <K1 extends keyof S, K2 extends keyof S[K1]>(k1: K1, k2: K2): ObjectModifier2<S, S[K1][K2]>,
+  <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2]>(k1: K1, k2: K2, k3: K3): ObjectModifier2<S, S[K1][K2][K3]>,
+  <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3]>(k1: K1, k2: K2, k3: K3, k4: K4): ObjectModifier2<S, S[K1][K2][K3][K4]>,
+  <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3], K5 extends keyof S[K1][K2][K3][K4]>(k1: K1, k2: K2, k3: K3, k4: K4, k5: K5): ObjectModifier2<S, S[K1][K2][K3][K4][K5]>,
+}
+
+type Selector3<S extends State> = {
+  <K1 extends keyof S>(k1: K1): ObjectModifier3<S, S[K1]>,
   <K1 extends keyof S, K2 extends keyof S[K1]>(k1: K1, k2: K2): ObjectModifier2<S, S[K1][K2]>,
   <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2]>(k1: K1, k2: K2, k3: K3): ObjectModifier2<S, S[K1][K2][K3]>,
   <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3]>(k1: K1, k2: K2, k3: K3, k4: K4): ObjectModifier2<S, S[K1][K2][K3][K4]>,
@@ -76,6 +88,26 @@ class ObjectModifier2<S extends State, T> {
 
   set(newValue: T) {
     return { path: this._path, mapper: () => newValue } 
+  }
+}
+
+class ObjectModifier3<S extends State, T> {
+  _state: S
+  _path: string[]
+  _consume: any // TODO
+
+  constructor(state: S, path: string[], consume: any) { // TODO
+    this._state = state
+    this._path = path,
+    this._consume = consume
+  }
+
+  map(mapper: (value: T) => T): void {
+    this._consume({ path: this._path, mapper })
+  }
+
+  set(newValue: T): void {
+    this._consume({ path: this._path, mapper: () => newValue }) 
   }
 }
 

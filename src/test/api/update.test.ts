@@ -49,10 +49,27 @@ describe('update', () => {
   })
   
   it('should perform multiple updates properly', () => {
-    const result = update(state, path => [
-      path('login', 'username').set('John Doe') as any, // TODO
-      path('login', 'isAdmin').map(it => !it) as any, // TODO
+    const result = update.multiple(state, select => [
+      select('login', 'username').set('John Doe'), // TODO
+      select('login', 'isAdmin').map(it => !it), // TODO
     ])
+    
+    expect(result)
+      .to.eql({
+        ...state,
+        login: {
+          ...state.login,
+          username: 'John Doe',
+          isAdmin: false
+        }
+      })
+  })
+  
+  it('should perform updates imperative', () => {
+    const result = update.imperative(state, modify => {
+      modify('login', 'username').set('John Doe'),
+      modify('login', 'isAdmin').map(it => !it)
+    })
     
     expect(result)
       .to.eql({
