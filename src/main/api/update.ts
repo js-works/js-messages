@@ -1,34 +1,48 @@
-export default function update<S extends State>(state: S): Updater<S> {
-  return new Updater(state)
-}
+import { pseudoRandomBytes } from "crypto"
 
-class Updater<S extends State> {
-  private _state: S
+export default update
 
-  constructor(state: S) {
-    this._state = state
-  }
 
-  path<K1 extends keyof S>(k1: K1): Cursor<S, S[K1]>
-  path<K1 extends keyof S, K2 extends keyof S[K1]>(k1: K1, k2: K2): Cursor<S, S[K1][K2]>
-  path<K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2]>(k1: K1, k2: K2, k3: K3): Cursor<S, S[K1][K2][K3]>
-  path<K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3]>(k1: K1, k2: K2, k3: K3, k4: K4): Cursor<S, S[K1][K2][K3][K4]>
-  path<K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3], K5 extends keyof S[K1][K2][K3][K4]>(k1: K1, k2: K2, k3: K3, k4: K4, k5: K5): Cursor<S, S[K1][K2][K3][K4][K5]>
-  path(...args: any[]): Cursor<S, any> {
-    return new Cursor(this._state, args)
-  }
+function update<S extends State>(state: S, getUpdates: (createPath: Path<S>) => Update<S, any>[]): S
+function update<S extends State>(state: S): CreatePath<S>
 
-  modify(getUpdates: (createPath: Path<S>) => Update<S, any>[]): S {
+function update<S extends State>(state: S, arg2?: any): any {
+  let ret: any
+  
+  if (!arg2) {
+    ret = createPath(state)
+  } else {
     const
-      createPath = (...path: string[]) => new XXX(this._state, path),
-      updates = getUpdates(createPath as any) // TODO
+      createPath = (...path: string[]) => new XXX(state, path),
+      updates = arg2(createPath as any) // TODO
 
-    let ret = this._state
-
-    return performUpdates(this._state, updates.map(update => {
+    return performUpdates(state, updates.map((update: any) => { // TODO
       return { path: update._path, mapper: update._mapper }
     }))
   }
+
+  return ret
+}
+
+type CreatePath<S extends State> = {
+  <K1 extends keyof S>(k1: K1): Cursor<S, S[K1]>,
+  <K1 extends keyof S, K2 extends keyof S[K1]>(k1: K1, k2: K2): Cursor<S, S[K1][K2]>,
+  <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2]>(k1: K1, k2: K2, k3: K3): Cursor<S, S[K1][K2][K3]>,
+  <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3]>(k1: K1, k2: K2, k3: K3, k4: K4): Cursor<S, S[K1][K2][K3][K4]>,
+  <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3], K5 extends keyof S[K1][K2][K3][K4]>(k1: K1, k2: K2, k3: K3, k4: K4, k5: K5): Cursor<S, S[K1][K2][K3][K4][K5]>,
+}
+
+function createPath<S extends State>(state: S) {
+  function path<K1 extends keyof S>(k1: K1): Cursor<S, S[K1]>
+  function path<K1 extends keyof S, K2 extends keyof S[K1]>(k1: K1, k2: K2): Cursor<S, S[K1][K2]>
+  function path<K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2]>(k1: K1, k2: K2, k3: K3): Cursor<S, S[K1][K2][K3]>
+  function path<K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3]>(k1: K1, k2: K2, k3: K3, k4: K4): Cursor<S, S[K1][K2][K3][K4]>
+  function path<K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3], K5 extends keyof S[K1][K2][K3][K4]>(k1: K1, k2: K2, k3: K3, k4: K4, k5: K5): Cursor<S, S[K1][K2][K3][K4][K5]>
+  function path(...args: any[]): Cursor<S, any> {
+    return new Cursor(state, args)
+  }
+
+  return path
 }
 
 class XXX<S extends State, T> {

@@ -1,6 +1,5 @@
 import { describe, it } from 'mocha'
 import { expect } from 'chai'
-
 import update from '../../main/api/update'
 
 const state = {
@@ -24,7 +23,7 @@ const
 
 describe('update', () => {
   it('should perform a "set" operation properly on objects', () => {
-    const result = update(state).path('login', 'isAdmin').set(false)
+    const result = update(state)('login', 'isAdmin').set(false)
     
     expect(result)
       .to.eql({
@@ -37,7 +36,7 @@ describe('update', () => {
   })
   
   it('should perform a "map" operation properly on objects', () => {
-    const result = update(state).path('login', 'isAdmin').map(it => !it)
+    const result = update(state)('login', 'isAdmin').map(it => !it)
     
     expect(result)
       .to.eql({
@@ -50,9 +49,9 @@ describe('update', () => {
   })
   
   it('should perform multiple updates properly', () => {
-    const result = update(state).modify(path => [
-       path('login', 'username').set('John Doe') as any, // TODO
-       path('login', 'isAdmin').map(it => !it) as any, // TODO
+    const result = update(state, path => [
+      path('login', 'username').set('John Doe') as any, // TODO
+      path('login', 'isAdmin').map(it => !it) as any, // TODO
     ])
     
     expect(result)

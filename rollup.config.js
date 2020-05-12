@@ -33,7 +33,7 @@ function createConfig(moduleFormat, productive) {
       sourcemap: productive ? false : 'inline',
     },
 
-    //external: ['immer'],
+    external: ['immer'],
 
     plugins: [
       resolve(),
