@@ -1,7 +1,12 @@
 export default update
 
-function update<S extends State>(state: S): Selector<S> {
-  return select(state)
+function update<S extends State>(state: S): { path: Selector<S> }
+function update<S extends State, K extends keyof S>(state: S, key: K): ReturnType<Selector<S>>
+
+function update<S extends State>(state: S, key?: string) {
+  return key
+    ? update(state).path(key)
+    : { path: select(state) }
 }
 
 update.multiple = <S extends State>(state: S, getUpdates: (select: Selector2<S>) => Update<S, any>[]): S => {

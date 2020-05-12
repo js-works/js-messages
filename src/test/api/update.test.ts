@@ -22,8 +22,18 @@ const
   task2 = tasks[1]
 
 describe('update', () => {
-  it('should perform a "set" operation properly on objects', () => {
-    const result = update(state)('login', 'isAdmin').set(false)
+  it('should perform a "set" operation on direct object properties', () => {
+    const result = update(state, 'tasks').set([])
+    
+    expect(result)
+      .to.eql({
+        ...state,
+        tasks: []
+      })
+  })
+  
+  it('should perform a "set" operation properly on nested objects', () => {
+    const result = update(state).path('login', 'isAdmin').set(false)
     
     expect(result)
       .to.eql({
@@ -36,7 +46,7 @@ describe('update', () => {
   })
   
   it('should perform a "map" operation properly on objects', () => {
-    const result = update(state)('login', 'isAdmin').map(it => !it)
+    const result = update(state).path('login', 'isAdmin').map(it => !it)
     
     expect(result)
       .to.eql({
