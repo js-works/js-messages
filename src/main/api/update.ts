@@ -25,11 +25,9 @@ class Updater<S extends State> {
 
     let ret = this._state
 
-    updates.forEach(update => {
-      ret = update.perform(ret)
-    })
-
-    return ret
+    return performUpdates(this._state, updates.map(update => {
+      return { path: update._path, mapper: update._mapper }
+    }))
   }
 }
 
@@ -92,22 +90,29 @@ type Path<S extends State> = {
   <K1 extends keyof S, K2 extends keyof S[K1], K3 extends keyof S[K1][K2], K4 extends keyof S[K1][K2][K3], K5 extends keyof S[K1][K2][K3][K4]>(k1: K1, k2: K2, k3: K3, k4: K4, k5: K5): Cursor<S, S[K1][K2][K3][K4][K5]>
 }
 
-function performUpdate<S extends State>(state: S, path: string[], mapper: (value: any) => any): S {
-  let state2: any = { ...state }
-  let substate = state
-  let substate2: any = state2
+function performUpdates<S extends State>(state: S, updates: { path: string[], mapper: (value: any) => any }[]) {
+  let state2 = { ...state }
 
-  path.forEach((key, idx) => {
-    if (idx < path.length - 1) {
-      substate2[key] = { ...substate[key] }
-      substate = substate[key]
-      substate2 = substate2[key]
-    } else {
-      substate2[key] = mapper(substate2[key])
-    }
+  updates.forEach(({ path, mapper }) => {
+    let substate = state2 // TODO - do we really need variable substate?
+    let substate2: any = state2
+
+    path.forEach((key, idx) => {
+      if (idx < path.length - 1) {
+        substate2[key] = { ...substate[key] }
+        substate = substate[key]
+        substate2 = substate2[key]
+      } else {
+        substate2[key] = mapper(substate2[key])
+      }
+    })
   })
 
   return state2
+}
+
+function performUpdate<S extends State>(state: S, path: string[], mapper: (value: any) => any): S {
+  return performUpdates(state, [{ path, mapper }])
 }
 
 type State = Record<string, any>

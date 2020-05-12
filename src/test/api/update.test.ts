@@ -51,8 +51,8 @@ describe('update', () => {
   
   it('should perform multiple updates properly', () => {
     const result = update(state).modify(path => [
-       path('login', 'username').set('John Doe') as any,
-       path('login', 'isAdmin').map(it => !it) as any,
+       path('login', 'username').set('John Doe') as any, // TODO
+       path('login', 'isAdmin').map(it => !it) as any, // TODO
     ])
     
     expect(result)
