@@ -92,14 +92,25 @@ type Path<S extends State> = {
 
 function performUpdates<S extends State>(state: S, updates: { path: string[], mapper: (value: any) => any }[]) {
   let state2 = { ...state }
+  let modifiedPaths: any = updates.length > 1 ? {} : null // TODO
 
   updates.forEach(({ path, mapper }) => {
+    let pathAsString = ''
     let substate = state2 // TODO - do we really need variable substate?
     let substate2: any = state2
 
     path.forEach((key, idx) => {
+      pathAsString = idx === 0 ? key : '@' + key
+
       if (idx < path.length - 1) {
-        substate2[key] = { ...substate[key] }
+        if (!modifiedPaths || !hasOwnProp(modifiedPaths, pathAsString)) {
+          substate2[key] = { ...substate[key] }
+          
+          if (modifiedPaths) {
+            modifiedPaths[pathAsString] = true
+          }
+        }
+
         substate = substate[key]
         substate2 = substate2[key]
       } else {
@@ -113,6 +124,10 @@ function performUpdates<S extends State>(state: S, updates: { path: string[], ma
 
 function performUpdate<S extends State>(state: S, path: string[], mapper: (value: any) => any): S {
   return performUpdates(state, [{ path, mapper }])
+}
+
+function hasOwnProp(obj: any, propName: string) {
+  return Object.prototype.hasOwnProperty.call(obj, propName)
 }
 
 type State = Record<string, any>
