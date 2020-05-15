@@ -48,6 +48,21 @@ const Actions2 = defineMessages({
   }
 } as const)
 
+const Actions3 = defineMessages('category', {
+  action1: {},
+  action2: (value: number = 0) => value,
+  action3: (value: number = 21) => ({ value }),
+  
+  action4: {
+    payload: (value: number = 42) => ({ value }),
+    meta: (value: number = 42) => ({ half: value / 2})
+  },
+
+  action5: {
+    meta: (value: number = 42) => ({ half: value / 2})
+  }
+})
+
 describe('defineMessages', () => {
   it('should create messages with neither payload nor meta', () => {
     expect(Actions.action1())
@@ -104,6 +119,36 @@ describe('defineMessages (alternative syntax)', () => {
       .to.eql({ type: 'category.action4', payload: { value: 2 }, meta: { half: 1 } })
     
     expect(Actions2.action5(42))
+      .to.eql({ type: 'category.action5', meta: { half: 21 } })
+  })
+})
+
+describe('defineMessages (second alternative syntax)', () => {
+  it('should create messages with neither payload nor meta', () => {
+    expect(Actions3.action1())
+      .to.eql({ type: 'category.action1' })
+  })
+
+  it('should create messages properly with payload getter', () => {
+    expect(Actions3.action2())
+      .to.eql({ type: 'category.action2', payload: 0 })
+
+    expect(Actions3.action2(2))
+      .to.eql({ type: 'category.action2', payload: 2 })
+   
+    expect(Actions3.action3())
+      .to.eql({ type: 'category.action3', payload: { value: 21 } })
+
+    expect(Actions3.action3(2))
+      .to.eql({ type: 'category.action3', payload: { value: 2 } })
+   
+    expect(Actions3.action4())
+      .to.eql({ type: 'category.action4', payload: { value: 42 }, meta: { half: 21 } })
+
+    expect(Actions3.action4(2))
+      .to.eql({ type: 'category.action4', payload: { value: 2 }, meta: { half: 1 } })
+    
+    expect(Actions3.action5(42))
       .to.eql({ type: 'category.action5', meta: { half: 21 } })
   })
 })

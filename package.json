@@ -1,6 +1,6 @@
 {
   "name": "js-messages",
-  "version": "0.1.28",
+  "version": "0.1.29",
   "license": "LGPL-3.0",
   "homepage": "https://github.com/js-works/js-messages",
   "main": "index.js",
@@ -52,7 +52,7 @@
     "test": "nyc mocha -r ts-node/register src/test/**/*.ts",
     "test-watch": "mocha -w -r ts-node/register src/test/**/*.ts",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "zipsource": "shx rm -rf ./build/source && shx mkdir -p ./build/source && copyfiles -a ./* ./build/source && shx cp -r ./src ./build/source && shx mkdir -p ./dist/source && cd build/source && bestzip ../../dist/source/source.zip . && cd ../..",
+    "zipsource": "shx rm -rf ./build/source && shx mkdir -p ./build/source && copyfiles -a ./* ./build/source && shx cp -r ./src ./build/source && shx mkdir -p ./dist/source && cd build && bestzip --force node ../dist/source/source.zip source && cd ..",
     "dist": "npm run clean && npm run test && npm run build && npm run zipsource"
   },
   "nyc": {
