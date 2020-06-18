@@ -15,109 +15,60 @@ npm install --save js-messages
 
 ## Usage
 
-js-messages currently consists of two functions:
+js-messages currently consists of three functions:
 
 - `defineMessage`: To define one type of message / to create one message creator
 - `defineMessages`: To define multiple related messages represented by message creators
+- `props`: A helper function to define a message creator where all message properties
+  must be declared explicitly in an object (actually only useful with TypeScript)
 
 Example 1 (using `defineMessage`)
 
-```javascript
+```ts
 import { defineMessage } from 'js-messages'
 
-const
-  increment = defineMessage('increment'),
-  // for messages of shape { type: 'increment' }
-  
-  decrement = defineMessage('decrement'),
-  // for messages of shape { type: 'decrement' }
+const increment = defineMessage('increment')
+// for messages of shape { type: 'increment' }
 
-  resetTo = defineMessage('resetTo', (value: number) => value)
-  // for messages of shape { type: 'resetTo', payload: number }
+const decrement = defineMessage('decrement')
+// for messages of shape { type: 'decrement' }
 
-expect(increment())
-  .to.eql({ type: 'increment' })
-
-expect(decrement())
-  .to.eql({ type: 'decrement' })
-
-expect(resetTo(0))
-  .to.eql({ type: 'resetTo', payload: 0 })
+const resetTo = defineMessage('resetTo', (value: number) => ({ value }))
+// for messages of shape { type: 'resetTo', value: number }
 ```
 
-Example 2 (using `defineMessages`):
+Example 2 (using `defineMessage` and `props`)
 
-```javascript
-import { defineMessages } from 'js-messages'
-
-const Actions = defineMessages({
-  increment: {},
-  // for messages of shape { type: 'increment' }
-
-  decrement: {}
-  // for messages of shape { type: 'decrement' }
-
-  resetTo: (value: number) => value
-  // for messages of shape { type: 'resetTo', payload: number }
-  
-  log: (value: number, message: string = null) => ({ value, message })
-  // for messages of shape { type: 'log', payload: { value: number, message: string } }
-})
-
-expect(Actions.increment())
-  .to.eql({ type: 'increment' })
-
-expect(Actions.decrement())
-  .to.eql({ type: 'decrement' })
-
-expect(Actions.resetTo(0))
-  .to.eql({ type: 'resetTo', payload: 0 })
-
-expect(Actions.log(42, 'value at 2019-03-08 T 10:45 UTC'))
-  .to.eql({
-     type: 'log',
-     
-     payload: {
-       value: 42,
-       message: 'value at 2019 T 10:45 UTC'
-     }
-  })
-
-expect(Actions.increment.type).to.eql('increment')
-expect(Actions.decrement.type).to.eql('decrement')
-expect(Actions.resetType.type).to.eql('resetTo')
-expect(Actions.log.type).to.eql('log')
+```ts
+const saveToLocalStorage = defineMessage(
+  'saveToLocalStorage',
+  props<{ tasks: Task[]; storeKey: string }>()
+)
+// for messages of shape
+//   {
+//     type: 'saveToLocalStorage',
+//     tasks: Task[],
+//     storeKey: string
+//   }
 ```
 
 Example 3 (using `defineMessages`):
 
-```javascript
+```ts
 import { defineMessages } from 'js-messages'
 
-type Task = {
-  id: number,
-  title: string,
-  description: string,
-  completed: boolean
-}
-
 const Actions = defineMessages({
-  addTask: (title: string, description: string = '') => ({ title, description }),
-  // for messages of shape { type: 'addTask', payload: { title: string, description: string }}
+  increment: null,
+  // for messages of shape { type: 'increment' }
 
-  completeTask: (id: number) => id,
-  // for messages of shape { type: 'completeTask', payload: number }
+  decrement: null,
+  // for messages of shape { type: 'decrement' }
 
-  saveToLocalStorage: {
-    payload: (tasks: Task[], key: string, user: string) => tasks,
-    meta: (tasks: Task[], key: string, user: string) => ({ key, user })
-  }
-  // for messages of shape
-  //   {
-  //     type: 'saveToLocalStorage',
-  //     payload: Task[],
-  //     meta: { key: string, user: string }
-  //   }
+  resetTo: (value: number) => ({ value })
+  // for messages of shape { type: 'resetTo', value: number }
+
+  log: (value: number, message: string = null) => ({ value, message })
+  // for messages of shape { type: 'log', value: number, message: string }
 })
 ```
 

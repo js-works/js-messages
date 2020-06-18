@@ -1,47 +1,26 @@
-import Func from '../internal/types/Func'
-import MessageInitializer from '../internal/types/MessageInitializer'
-import MessageCreatorType from '../internal/types/MessageCreatorType'
+import Message from '../internal/types/Message'
+import Props from '../internal/types/Props'
 
-function defineMessage<T extends string, I extends MessageInitializer<any>>(
-  type: T
-): MessageCreatorType<T, {}>
+function defineMessage<T extends string>(type: T): () => Message<T>
 
-function defineMessage<T extends string, I extends MessageInitializer<any>>(
+function defineMessage<T extends string, A extends any[], P extends Props>(
   type: T,
-  initializer: I
-): MessageCreatorType<T, I>
+  getProps: (...args: A) => P
+): (...args: A) => Message<T, P>
 
-function defineMessage(type: any, initializer?: any) {
-  let ret: any
+function defineMessage(
+  type: string,
+  getProps?: (...args: any[]) => Record<string, any>
+) {
+  let ret: Record<string, any>
 
-  if (!initializer) {
-    const message = { type }
+  if (!getProps) {
+    const msg = Object.freeze({ type })
 
-    ret = () => message
-  } else if (typeof initializer === 'function') {
-    const getPayload = initializer as Func<any, any>
-    
-    ret = function (/* arguments */) {
-      const payload = getPayload.apply(null, arguments as any)
-
-      return { type, payload }
-    }
+    ret = () => msg
   } else {
-    const { payload: getPayload, meta: getMeta } = initializer as any // TODO
-
-    ret = function (/* arguments */) {
-      const msg: any = { type }
-
-      if (getPayload) {
-        msg.payload = getPayload.apply(null, arguments as any)
-      }
-
-      if (getMeta) {
-        msg.meta = getMeta.apply(null, arguments as any)
-      }
-
-      return msg
-    }
+    ret = (...args: any[]) =>
+      Object.assign({ type }, getProps.apply(null, args))
   }
 
   Object.defineProperty(ret, 'type', {
