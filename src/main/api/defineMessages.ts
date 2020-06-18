@@ -1,6 +1,7 @@
 import defineMessage from './defineMessage'
 import Message from '../internal/types/Message'
 import Props from '../internal/types/Props'
+import MessageCreator from '../internal/types/MessageCreator'
 
 type MessagesConfig = {
   [type: string]: null | ((...args: any[]) => Props)
@@ -8,9 +9,9 @@ type MessagesConfig = {
 
 type MessageCreatorsOf<C extends MessagesConfig> = {
   [T in keyof C]: T extends string
-    ? C[T] extends (...args: infer A) => infer R
-      ? (...args: A) => Message<T, R>
-      : () => Message<T>
+    ? C[T] extends (...args: infer A) => infer P
+      ? MessageCreator<T, A, P>
+      : MessageCreator<T>
     : never
 }
 

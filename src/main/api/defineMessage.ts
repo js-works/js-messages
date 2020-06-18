@@ -1,18 +1,19 @@
 import Message from '../internal/types/Message'
 import Props from '../internal/types/Props'
+import MessageCreator from '../internal/types/MessageCreator'
 
-function defineMessage<T extends string>(type: T): () => Message<T>
+function defineMessage<T extends string>(type: T): MessageCreator<T>
 
 function defineMessage<T extends string, A extends any[], P extends Props>(
   type: T,
   getProps: (...args: A) => P
-): (...args: A) => Message<T, P>
+): MessageCreator<T, A, P>
 
 function defineMessage(
   type: string,
   getProps?: (...args: any[]) => Record<string, any>
-) {
-  let ret: Record<string, any>
+): MessageCreator<any, any, any> {
+  let ret: any
 
   if (!getProps) {
     const msg = Object.freeze({ type })
