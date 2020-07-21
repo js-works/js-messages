@@ -7,83 +7,38 @@ type MessagesConfig = {
   [type: string]: null | ((...args: any[]) => Props)
 }
 
-type MessageCreators1Of<C extends MessagesConfig> = {
+type MessageCreators<
+  C extends MessagesConfig,
+  ForceStrings extends boolean = false
+> = {
   [T in keyof C]: T extends string
     ? C[T] extends (...args: infer A) => infer P
-      ? MessageCreator<T, A, P>
-      : MessageCreator<T>
+      ? MessageCreator<ForceStrings extends false ? T : string, A, P>
+      : MessageCreator<ForceStrings extends false ? T : string>
     : never
 }
 
-type MessageCreators2Of<C extends MessagesConfig> = {
-  [T in keyof C]: T extends string
-    ? C[T] extends (...args: infer A) => infer P
-      ? MessageCreator<string, A, P>
-      : MessageCreator<string>
-    : never
-}
-
-function defineMessages<C extends MessagesConfig>(
-  config: C
-): MessageCreators1Of<C>
+function defineMessages<C extends MessagesConfig>(config: C): MessageCreators<C>
 
 function defineMessages<C extends MessagesConfig>(
   namespace: string,
   config: C
-): MessageCreators2Of<C>
+): MessageCreators<C, true>
 
 function defineMessages(arg1: any, arg2?: any): any {
-  return arg2 ? defineMessages2(arg1, arg2) : defineMessages1(arg1)
-}
-
-function defineMessages1<C extends MessagesConfig>(
-  config: C
-): MessageCreators2Of<C> {
   const ret: any = {}
+  const category = arg2 ? arg1 : ''
+  const config = arg2 ? arg2 : arg1
   const keys = Object.keys(config)
 
   keys.forEach((key) => {
     let type = key
     let initializer: any = config[key]
 
-    if (
-      initializer &&
-      typeof initializer === 'object' &&
-      typeof initializer.type === 'string'
-    ) {
-      type = initializer.type
-      initializer = { ...initializer }
-      delete initializer.type
-    }
-
-    ret[key] = defineMessage(type, initializer)
-  })
-
-  return ret
-}
-
-function defineMessages2<C extends MessagesConfig>(
-  category: string,
-  config: C
-): MessageCreators2Of<C> {
-  const ret: any = {}
-  const keys = Object.keys(config)
-
-  keys.forEach((key) => {
-    let type = key
-    let initializer: any = config[key]
-
-    if (
-      initializer &&
-      typeof initializer === 'object' &&
-      typeof initializer.type === 'string'
-    ) {
-      type = initializer.type
-      initializer = { ...initializer }
-      delete initializer.type
-    }
-
-    ret[key] = defineMessage(`${category}.${type}`, initializer)
+    ret[key] = defineMessage(
+      category ? `${category}.${type}` : type,
+      initializer
+    )
   })
 
   return ret
