@@ -20,7 +20,7 @@ js-messages consists of three functions:
 - `defineMessage`: To define one type of message / to create one message creator
 - `defineMessages`: To define multiple related messages represented by message creators
 - `props`: A helper function to define a message creator where all message properties
-  must be declared explicitly in an object (actually only useful with TypeScript)
+  must be declared explicitly in an object.
 
 Example 1 (using `defineMessage`)
 
