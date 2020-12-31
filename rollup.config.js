@@ -1,7 +1,5 @@
-//import { tslint } from 'rollup-plugin-tslint'
 import resolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
-import replace from 'rollup-plugin-replace'
 import typescript from 'rollup-plugin-typescript2'
 import { uglify as uglifyJS } from 'rollup-plugin-uglify'
 import { terser } from 'rollup-plugin-terser'
@@ -10,46 +8,31 @@ import gzip from 'rollup-plugin-gzip'
 const configs = []
 
 for (const format of ['umd', 'cjs', 'amd', 'esm']) {
-  for (const productive of [false, true]) {
-    configs.push(createConfig(format, productive))
-  }
+  configs.push(createConfig(format))
 }
 
 export default configs
 
 // --- locals -------------------------------------------------------
 
-function createConfig(moduleFormat, productive) {
+function createConfig(moduleFormat) {
   return {
-    input: 'src/main/index.ts',
+    input: 'src/main.ts',
 
     output: {
-      file: productive
-        ? `dist/js-messages.${moduleFormat}.production.js`
-        : `dist/js-messages.${moduleFormat}.development.js`,
-
+      file: `dist/js-messages.${moduleFormat}.js`,
       format: moduleFormat,
-      name: 'jsMessages', 
-      sourcemap: productive ? false : 'inline',
+      name: 'jsMessages'
     },
 
     plugins: [
       resolve(),
       commonjs(),
-      // tslint({
-      //}),
-      replace({
-        exclude: 'node_modules/**',
-
-        values: {
-          'process.env.NODE_ENV': productive ? "'production'" : "'development'"
-        }
-      }),
       typescript({
-        exclude: 'node_modules/**',
+        exclude: 'node_modules/**'
       }),
-      productive && (moduleFormat === 'esm' ? terser() : uglifyJS()),
-      productive && gzip()
-    ],
+      moduleFormat === 'esm' ? terser() : uglifyJS(),
+      gzip()
+    ]
   }
 }

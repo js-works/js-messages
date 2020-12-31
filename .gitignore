@@ -2,13 +2,12 @@
 /.project
 /.vscode
 /.idea
+/nbproject
 /.c9
 /.codio
 /.settings
-/.grunt
 /.rpt2_cache
 /.nyc_output
-/nbproject
 /node_modules
 /build
 /dist

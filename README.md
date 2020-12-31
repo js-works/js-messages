@@ -15,7 +15,7 @@ npm install --save js-messages
 
 ## Usage
 
-js-messages currently consists of three functions:
+js-messages consists of three functions:
 
 - `defineMessage`: To define one type of message / to create one message creator
 - `defineMessages`: To define multiple related messages represented by message creators
@@ -40,19 +40,20 @@ const resetTo = defineMessage('resetTo', (value: number) => ({ value }))
 Example 2 (using `defineMessage` and `props`)
 
 ```ts
-const saveToLocalStorage = defineMessage(
-  'saveToLocalStorage',
-  props<{ tasks: Task[]; storeKey: string }>()
+const saveToStorage = defineMessage(
+  'saveToStorage',
+  props<{ tasks: Task[]; storageKey: string }>()
 )
+
 // for messages of shape
 //   {
-//     type: 'saveToLocalStorage',
+//     type: 'saveToStorage',
 //     tasks: Task[],
-//     storeKey: string
+//     storageKey: string
 //   }
 ```
 
-Example 3 (using `defineMessages`):
+Example 3 (using `defineMessages`, without namespace):
 
 ```ts
 import { defineMessages } from 'js-messages'
@@ -72,10 +73,30 @@ const Actions = defineMessages({
 })
 ```
 
+Example 4 (using `defineMessages`, with namespace):
+
+```ts
+import { defineMessages } from 'js-messages'
+
+const Actions = defineMessages('counter', {
+  increment: null,
+  // for messages of shape { type: 'counter.increment' }
+
+  decrement: null,
+  // for messages of shape { type: 'counter.decrement' }
+
+  resetTo: (value: number) => ({ value })
+  // for messages of shape { type: 'counter.resetTo', value: number }
+
+  log: (value: number, message: string = null) => ({ value, message })
+  // for messages of shape { type: 'counter.log', value: number, message: string }
+})
+```
+
 ## License
 
 "js-messages" is licensed under LGPLv3.
 
 ## Project status
 
-"js-messages" is currently in alpha status.
+"js-messages" is currently in beta status.

@@ -5,11 +5,11 @@
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "lib": ["es7"],
     "esModuleInterop": true,
     "typeRoots": ["node_modules/@types"],
     "types": ["node", "mocha", "chai"]
   },
-  "files": ["src/main/index.ts"]
+  "files": ["src/main.ts"]
 }
