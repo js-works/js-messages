@@ -1,6 +1,6 @@
 // === exports ======================================================
 
-export { defineMessage, defineMessages, props }
+export { defineMessage, defineMessages, props, MessageOf }
 
 // === types ========================================================
 
@@ -39,6 +39,15 @@ type MessageCreators<C extends MessagesConfig, N extends string> = {
       : never
     : never
 }
+
+// utility type to derive the message type of a message creator
+// or the combined type of all possible messages of a message
+// creator object
+type MessageOf<X> = X extends MessageCreator<any, any, any>
+  ? ReturnType<X>
+  : X extends { [k: string]: MessageCreator<any, any, any> }
+  ? { [K in keyof X]: ReturnType<X[K]> }[keyof X]
+  : never
 
 // === defineMessage ================================================
 
